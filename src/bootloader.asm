@@ -1,4 +1,3 @@
-; Assemble the bootloader with: nasm -f bin -o bootloader.img bootloader.asm
 org 7C00h
 
 jmp short Start
@@ -68,7 +67,7 @@ NextChar:
 ; TODO: Also write the kernel.
 
 ; Zerofill up to 510 bytes
-times 0200h - 2 - ($ - $$)  db 0
+times 510 - ($ - $$)  db 0
 
 ; Boot Sector signature
 dw 0AA55h
