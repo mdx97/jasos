@@ -5,6 +5,7 @@ BootMessage: db "Booting..."
 End:
 
 section .text
+extern let_there_be_light
 global _start
 _start:
 
@@ -67,6 +68,8 @@ NextChar:
 
         cmp si, End
         jne NextChar 
+
+call let_there_be_light
 
 ; Zerofill up to 510 bytes
 times 510 - ($ - $$)  db 0
