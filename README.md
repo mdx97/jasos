@@ -3,7 +3,7 @@
 ## Requirements
 - GNU Make
 - NASM
-
+- Cross compiler toolchain (see [OSDev Wiki](https://wiki.osdev.org/GCC_Cross-Compiler))
 ## How to Use
 1. Build the OS.
 
