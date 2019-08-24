@@ -1,9 +1,14 @@
-org 7C00h
-
-jmp short Start
+; Allows our code to be run in real mode.
+BITS 16
 
 BootMessage: db "Booting..."
 End:
+
+section .text
+global _start
+_start:
+
+jmp Start
 
 ; Moves the cursor to row dl, col dh.
 MoveCursor:
@@ -62,9 +67,6 @@ NextChar:
 
         cmp si, End
         jne NextChar 
-
-; TODO: Load the kernel.
-; TODO: Also write the kernel.
 
 ; Zerofill up to 510 bytes
 times 510 - ($ - $$)  db 0
