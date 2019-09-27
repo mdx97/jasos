@@ -11,4 +11,4 @@
 
 2. Run Jasos in your VM of choice. I use QEMU. (Don't run this on actual hardware you madman).
 
-    ```qemu-system-i386 -drive file=bin/jasos.bin,index=0,media=disk,format=raw```
+    ```qemu-system-i386 -kernel bin/jasos.bin```
