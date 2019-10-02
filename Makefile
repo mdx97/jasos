@@ -9,3 +9,6 @@ terminal: src/terminal.c
 
 os: boot god terminal
 	i686-elf-gcc -T src/linker.ld -o bin/jasos.bin -ffreestanding -O2 -nostdlib build/boot.o build/god.o build/terminal.o -lgcc
+
+run: os
+	qemu-system-i386 -kernel bin/jasos.bin
