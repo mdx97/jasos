@@ -1,3 +1,4 @@
+#include "gdt.h"
 #include "terminal.h"
 
 void sermon_on_the_mount()
@@ -9,5 +10,6 @@ void sermon_on_the_mount()
 void let_there_be_light()
 {
     terminal_init();
+    gdt_init();
     sermon_on_the_mount();
 }
