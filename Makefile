@@ -13,8 +13,8 @@ kernel: src/kernel.cpp
 terminal: src/terminal.cpp
 	i686-elf-g++ -c src/terminal.cpp -o build/terminal.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
-os: bits boot kernel terminal
-	i686-elf-gcc -T src/linker.ld -o bin/jasos.bin -ffreestanding -O2 -nostdlib build/bits.o build/boot.o build/kernel.o build/terminal.o -lgcc
+os: bits boot gdt kernel terminal
+	i686-elf-gcc -T src/linker.ld -o bin/jasos.bin -ffreestanding -O2 -nostdlib build/bits.o build/boot.o build/gdt.o build/kernel.o build/terminal.o -lgcc
 
 run: os
 	qemu-system-i386 -kernel bin/jasos.bin
