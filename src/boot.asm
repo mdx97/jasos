@@ -71,8 +71,8 @@ _start:
 	; stack since (pushed 0 bytes so far) and the alignment is thus
 	; preserved and the call is well defined.
         ; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
-	extern let_there_be_light
-	call let_there_be_light
+	extern kernel_main
+	call kernel_main
 
 	cli
 .hang:	hlt
