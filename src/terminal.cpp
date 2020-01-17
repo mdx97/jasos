@@ -8,11 +8,6 @@ Terminal::Terminal(volatile char *video_pointer, int w, int h)
     height = h;
 }
 
-void Terminal::reset_pointer()
-{
-    video_pointer_current = video_pointer_origin;
-}
-
 void Terminal::clear()
 {
     reset_pointer();
@@ -51,4 +46,9 @@ void Terminal::putchar(char c)
 {
     *video_pointer_current++ = c;
     *video_pointer_current++ = 0x0F;
+}
+
+void Terminal::reset_pointer()
+{
+    video_pointer_current = video_pointer_origin;
 }

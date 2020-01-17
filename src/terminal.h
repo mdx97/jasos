@@ -5,7 +5,6 @@ class Terminal
 {
     public:
         Terminal(volatile char *video_pointer, int w, int h);
-        void init();
         void clear();
         void print(const char *string);
         void putchar(char c);
