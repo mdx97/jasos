@@ -1,7 +1,9 @@
 #include "gdt.h"
 #include "terminal.h"
 
-GdtRegister gdtr;
+extern void load_gdt() __asm__("load_gdt");
+
+GdtRegister GDTR;
 
 // JASOS kernel entry point.
 extern "C" void kernel_main()
@@ -13,9 +15,10 @@ extern "C" void kernel_main()
     gdt.add_entry(0, 0, 0, true, false, true, false, false, true);
     gdt.add_entry(0, 0xFFFFF, 0, false, true, true, true, false, true);
     gdt.add_entry(0, 0xFFFFF, 0, false, false, true, true, false, true);
-    gdt.construct_gdtr(&gdtr);
-
-    // TODO: Call code to load gdt in assembly
+    gdt.construct_gdtr(&GDTR);
+    load_gdt();
 
     terminal.print("Hello\nWorld!");
+
+    for (;;);
 }

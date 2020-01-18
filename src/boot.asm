@@ -74,7 +74,12 @@ _start:
 	extern kernel_main
 	call kernel_main
 
-	cli
-.hang:	hlt
-	jmp .hang
+.end:
+
+global load_gdt:function
+load_gdt:
+	extern GDTR
+	lgdt [GDTR]
+	ret
+
 .end:
