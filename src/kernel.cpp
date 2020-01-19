@@ -1,4 +1,6 @@
 #include "gdt.h"
+#include "keyboard.h"
+#include "port.h"
 #include "terminal.h"
 
 extern void load_gdt() __asm__("load_gdt");
@@ -18,7 +20,13 @@ extern "C" void kernel_main()
     gdt.construct_gdtr(&GDTR);
     load_gdt();
 
-    terminal.print("Hello\nWorld!");
+    terminal.print("> ");
 
-    for (;;);
+    while (true) {
+        char c = read_key();
+        if (c != '\0')
+            terminal.putchar(c);
+    } 
+
+    //for (;;);
 }

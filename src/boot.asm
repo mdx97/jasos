@@ -82,4 +82,14 @@ load_gdt:
 	lgdt [GDTR]
 	ret
 
-.end:
+global read_ps2_status:function
+read_ps2_status:
+	mov dx, 0x64
+	in eax, dx
+	ret
+
+global read_ps2_key:function
+read_ps2_key:
+	mov dx, 0x60
+	in eax, dx
+	ret
