@@ -1,3 +1,4 @@
+#include "cli.h"
 #include "gdt.h"
 #include "keyboard.h"
 #include "port.h"
@@ -20,12 +21,12 @@ extern "C" void kernel_main()
     gdt.construct_gdtr(&GDTR);
     load_gdt();
 
-    terminal.print("> ");
+    CLI cli{&terminal};
 
     while (true) {
         char c = read_key();
         if (c != '\0')
-            terminal.putchar(c);
+            cli.input(c);
     } 
 
     //for (;;);
