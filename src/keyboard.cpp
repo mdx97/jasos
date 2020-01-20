@@ -10,6 +10,7 @@ char scancode_keymap[] = {
 extern uint8_t read_ps2_status() __asm__("read_ps2_status");
 extern uint8_t read_ps2_key() __asm__("read_ps2_key");
 
+// Polls for a key until one is pressed, then returns the corresponding character value.
 char read_key()
 {
     while (true) {

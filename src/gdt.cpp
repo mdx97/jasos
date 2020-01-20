@@ -7,7 +7,7 @@ Gdt::Gdt()
 }
 
 /*
-    Properly adds a GDT Entry with the given arguments.
+    Adds an entry to the table with the given arguments.
 
     Parameters:
     - base_address:             The 32 bit address of the segment this entry is describing.
@@ -46,6 +46,7 @@ int Gdt::add_entry(
     return 0;
 }
 
+// Populates the GDTR with the size and address of the GDT.
 void Gdt::construct_gdtr(GdtRegister *gdtr)
 {
     gdtr->base_address = (uint32_t)&descriptors;

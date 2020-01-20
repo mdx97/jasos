@@ -2,13 +2,13 @@
 #include "keyboard.h"
 #include "shell.h"
 #include "string.h"
-#include "terminal.h"
 
 extern void load_gdt() __asm__("load_gdt");
 
 GdtRegister GDTR;
 Shell *shell;
 
+// Invokes a textual command against the kernel.
 void system(const char *command)
 {
     if (string_equal(command, "clear")) {

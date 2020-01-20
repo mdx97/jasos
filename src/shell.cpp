@@ -10,6 +10,7 @@ Shell::Shell(volatile char *video_pointer, int w, int h)
     buffer_ptr = 0;
 }
 
+// Clears the shell and sets the pointer back to the upper left corner of the terminal.
 void Shell::clear()
 {
     reset_pointer();
@@ -18,6 +19,7 @@ void Shell::clear()
     reset_pointer();
 }
 
+// Sends a character to be processed by the shell.
 void Shell::input(char c)
 {
     if (c == '\b') {
@@ -37,6 +39,7 @@ void Shell::input(char c)
     
 }
 
+// Prints a string to the shell.
 void Shell::output(const char *string)
 {
     int i = 0;
@@ -49,11 +52,13 @@ void Shell::output(const char *string)
     }
 }
 
+// Prints the input indicator for the shell.
 void Shell::ready_input()
 {
     output(">>> ");
 }
 
+// Clears the input buffer.
 void Shell::clear_buffer()
 {
     buffer_ptr = 0;
@@ -61,6 +66,7 @@ void Shell::clear_buffer()
         buffer[i] = '\0';
 }
 
+// Prints a single character to the shell.
 void Shell::putchar(char c)
 {
     switch (c) {
@@ -95,13 +101,16 @@ void Shell::putchar(char c)
     }
 }
 
+// Sets the video pointer back to it's original position.
 void Shell::reset_pointer()
 {
     video_pointer_current = video_pointer_origin;
 }
 
+// Scrolls the contents of the shell down by one line.
 void Shell::scroll()
 {
+    // TODO: Clean this function up.
     int end = (2 * width * height) - (2 * width);
     for (int i = 0; i < end; i += 2)
         video_pointer_origin[i] = video_pointer_origin[i + (width * 2)];

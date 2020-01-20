@@ -1,3 +1,4 @@
+// Returns if two strings are equal.
 bool string_equal(const char *string1, const char *string2)
 {
     int i = 0;
