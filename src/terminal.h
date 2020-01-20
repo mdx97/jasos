@@ -11,6 +11,7 @@ class Terminal
 
     private:
         void reset_pointer();
+        void scroll();
         volatile char *video_pointer_origin, *video_pointer_current;
         int width, height;
 

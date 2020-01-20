@@ -42,6 +42,10 @@ void Terminal::putchar(char c)
         case '\n': {
             int offset = ((int)video_pointer_current - (int)video_pointer_origin) % (width * 2);
             video_pointer_current += ((width * 2) - offset);
+            if ((int)video_pointer_current >= (int)video_pointer_origin + (2 * width * height)) {
+                scroll();
+                video_pointer_current -= (width * 2);
+            }
             break;
         }
 
@@ -60,4 +64,13 @@ void Terminal::putchar(char c)
 void Terminal::reset_pointer()
 {
     video_pointer_current = video_pointer_origin;
+}
+
+void Terminal::scroll()
+{
+    int end = (2 * width * height) - (2 * width);
+    for (int i = 0; i < end; i += 2)
+        video_pointer_origin[i] = video_pointer_origin[i + (width * 2)];
+    for (int i = end + 2; i < (2 * width * height); i += 2)
+        video_pointer_origin[i] = ' ';
 }
