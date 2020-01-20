@@ -11,8 +11,10 @@ CLI *cli;
 
 void system(const char *command)
 {
-    if (string_equal(command, "help")) {
-        cli->output("The kernel supports the following built-in commands:\n- help: How did you get here?\n- sys: Prints basic system information\n");
+    if (string_equal(command, "clear")) {
+        cli->clear();
+    } else if (string_equal(command, "help")) {
+        cli->output("The kernel supports the following built-in commands:\n- clear: Clears the screen\n- help: How did you get here?\n- sys: Prints basic system information\n");
     } else if (string_equal(command, "sys")) {
         cli->output("JASOS Kernel (v0.1)\n");
     } else {

@@ -8,6 +8,11 @@ CLI::CLI(Terminal *term)
     ready_input();
 }
 
+void CLI::clear()
+{
+    terminal->clear();
+}
+
 void CLI::input(char c)
 {
     if (c == '\b') {

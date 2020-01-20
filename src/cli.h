@@ -7,6 +7,7 @@ class CLI
 {
     public:
         CLI(Terminal *term);
+        void clear();
         void input(char c);
         void output(const char *string);
 
