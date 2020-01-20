@@ -16,7 +16,19 @@ void system(const char *command)
     } else if (string_equal(command, "help")) {
         shell->output("The kernel supports the following built-in commands:\n- clear: Clears the screen\n- help: How did you get here?\n- sys: Prints basic system information\n");
     } else if (string_equal(command, "sys")) {
-        shell->output("JASOS Kernel (v0.1)\n");
+        shell->output("\n"
+             " JJJJJJJJJ  AAAAAAAAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
+             " JJJJJJJJJ  AAAAAAAAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
+             "    JJJ     AAA   AAA  SSS        OOO   OOO  SSS      \n"
+             "    JJJ     AAA   AAA  SSS        OOO   OOO  SSS      \n"
+             "    JJJ     AAAAAAAAA  SSSSSSSSS  OOO   OOO  SSSSSSSSS\n"
+             "    JJJ     AAA   AAA  SSSSSSSSS  OOO   OOO  SSSSSSSSS\n"
+             "JJJ JJJ     AAA   AAA        SSS  OOO   OOO        SSS\n"
+             "JJJ JJJ     AAA   AAA        SSS  OOO   OOO        SSS\n"
+             "JJJJJJJ     AAA   AAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
+             "JJJJJJJ     AAA   AAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n\n"
+             "Kernel Version: 0.01\n"
+        );
     } else if (!string_equal(command, "")) {
         shell->output("Command not found! Type help to view available commands.\n");
     }
