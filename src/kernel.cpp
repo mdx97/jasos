@@ -17,7 +17,7 @@ void system(const char *command)
         shell->output("The kernel supports the following built-in commands:\n- clear: Clears the screen\n- help: How did you get here?\n- sys: Prints basic system information\n");
     } else if (string_equal(command, "sys")) {
         shell->output("JASOS Kernel (v0.1)\n");
-    } else {
+    } else if (!string_equal(command, "")) {
         shell->output("Command not found! Type help to view available commands.\n");
     }
 }

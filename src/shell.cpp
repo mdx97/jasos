@@ -32,6 +32,7 @@ void Shell::input(char c)
         clear_buffer();
         ready_input();
     } else {
+        if (buffer_ptr == SHELL_INPUT_BUFFER_SIZE - 1) return;
         buffer[buffer_ptr] = c;
         buffer_ptr++;
         putchar(c);
@@ -55,14 +56,14 @@ void Shell::output(const char *string)
 // Prints the input indicator for the shell.
 void Shell::ready_input()
 {
-    output(">>> ");
+    output("> ");
 }
 
 // Clears the input buffer.
 void Shell::clear_buffer()
 {
     buffer_ptr = 0;
-    for (int i = 0; i < 256; i++)
+    for (int i = 0; i < SHELL_INPUT_BUFFER_SIZE; i++)
         buffer[i] = '\0';
 }
 
@@ -81,10 +82,7 @@ void Shell::putchar(char c)
         case '\n': {
             int offset = ((int)video_pointer_current - (int)video_pointer_origin) % (width * 2);
             video_pointer_current += ((width * 2) - offset);
-            if ((int)video_pointer_current >= (int)video_pointer_origin + (2 * width * height)) {
-                scroll();
-                video_pointer_current -= (width * 2);
-            }
+            handle_scroll();
             break;
         }
 
@@ -94,6 +92,7 @@ void Shell::putchar(char c)
         }
         
         default: {
+            handle_scroll();
             *video_pointer_current++ = c;
             *video_pointer_current++ = 0x0F;
             break;
@@ -107,13 +106,22 @@ void Shell::reset_pointer()
     video_pointer_current = video_pointer_origin;
 }
 
+// Scrolls the contents of the shell if needed.
+void Shell::handle_scroll()
+{
+    if ((int)video_pointer_current >= (int)video_pointer_origin + (2 * width * height)) {
+        scroll();
+        video_pointer_current -= (width * 2);
+    }
+}
+
 // Scrolls the contents of the shell down by one line.
 void Shell::scroll()
 {
-    // TODO: Clean this function up.
-    int end = (2 * width * height) - (2 * width);
-    for (int i = 0; i < end; i += 2)
+    int end_terminal = 2 * width * height;
+    int end_existing = end_terminal - (2 * width);
+    for (int i = 0; i < end_existing; i += 2)
         video_pointer_origin[i] = video_pointer_origin[i + (width * 2)];
-    for (int i = end + 2; i < (2 * width * height); i += 2)
+    for (int i = end_existing + 2; i < end_terminal; i += 2)
         video_pointer_origin[i] = ' ';
 }

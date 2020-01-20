@@ -1,6 +1,8 @@
 #ifndef SHELL_H
 #define SHELL_H
 
+#define SHELL_INPUT_BUFFER_SIZE 256
+
 class Shell
 {
     public:
@@ -13,10 +15,11 @@ class Shell
     private:
         volatile char *video_pointer_origin, *video_pointer_current;
         int width, height;
-        char buffer[256];
+        char buffer[SHELL_INPUT_BUFFER_SIZE];
         int buffer_ptr;
         void clear_buffer();
         void reset_pointer();
+        void handle_scroll();
         void scroll();
         void putchar(char c);
 };
