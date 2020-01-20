@@ -1,24 +1,23 @@
 #include "cli.h"
+#include "kernel.h"
 
 CLI::CLI(Terminal *term)
 {
     terminal = term;
-    mode = INPUT;
     buffer_ptr = 0;
     ready_input();
 }
 
 void CLI::input(char c)
 {
-    if (mode != INPUT) return;
     if (c == '\b') {
         if (buffer_ptr == 0) return;
         buffer[buffer_ptr--] = '\0';
         terminal->putchar('\b');
     } else if (c == '\n') {
-        // TODO: try to execute text in buffer.
-        clear_buffer();
         terminal->putchar('\n');
+        system((const char *)buffer);
+        clear_buffer();
         ready_input();
     } else {
         buffer[buffer_ptr] = c;
@@ -26,6 +25,11 @@ void CLI::input(char c)
         terminal->putchar(c);
     }
     
+}
+
+void CLI::output(const char *string)
+{
+    terminal->print(string);
 }
 
 void CLI::ready_input()

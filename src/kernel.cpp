@@ -1,12 +1,24 @@
 #include "cli.h"
 #include "gdt.h"
 #include "keyboard.h"
-#include "port.h"
+#include "string.h"
 #include "terminal.h"
 
 extern void load_gdt() __asm__("load_gdt");
 
 GdtRegister GDTR;
+CLI *cli;
+
+void system(const char *command)
+{
+    if (string_equal(command, "help")) {
+        cli->output("The kernel supports the following built-in commands:\n- help: How did you get here?\n- sys: Prints basic system information\n");
+    } else if (string_equal(command, "sys")) {
+        cli->output("JASOS Kernel (v0.1)\n");
+    } else {
+        cli->output("Command not found! Type help to view available commands.\n");
+    }
+}
 
 // JASOS kernel entry point.
 extern "C" void kernel_main()
@@ -21,12 +33,13 @@ extern "C" void kernel_main()
     gdt.construct_gdtr(&GDTR);
     load_gdt();
 
-    CLI cli{&terminal};
+    CLI cmd{&terminal};
+    cli = &cmd;
 
     while (true) {
         char c = read_key();
         if (c != '\0')
-            cli.input(c);
+            cli->input(c);
     } 
 
     //for (;;);
