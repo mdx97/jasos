@@ -4,9 +4,6 @@ bits: src/bits.cpp
 boot: src/boot.asm
 	nasm -felf32 src/boot.asm -o build/boot.o
 
-cli: src/cli.cpp
-	i686-elf-g++ -c src/cli.cpp -o build/cli.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
-
 gdt: src/gdt.cpp
 	i686-elf-g++ -c src/gdt.cpp -o build/gdt.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
@@ -16,14 +13,14 @@ kernel: src/kernel.cpp
 keyboard: src/keyboard.cpp
 	i686-elf-g++ -c src/keyboard.cpp -o build/keyboard.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
+shell: src/shell.cpp
+	i686-elf-g++ -c src/shell.cpp -o build/shell.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+
 string: src/string.cpp
 	i686-elf-g++ -c src/string.cpp -o build/string.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
-terminal: src/terminal.cpp
-	i686-elf-g++ -c src/terminal.cpp -o build/terminal.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
-
-os: bits boot cli gdt kernel keyboard string terminal
-	i686-elf-gcc -T src/linker.ld -o bin/jasos.bin -ffreestanding -O2 -nostdlib build/bits.o build/boot.o build/cli.o build/gdt.o build/kernel.o build/keyboard.o build/string.o build/terminal.o -lgcc
+os: bits boot gdt kernel keyboard shell string
+	i686-elf-gcc -T src/linker.ld -o bin/jasos.bin -ffreestanding -O2 -nostdlib build/bits.o build/boot.o build/cli.o build/gdt.o build/kernel.o build/keyboard.o build/shell.o build/string.o build/terminal.o -lgcc
 
 run: os
 	qemu-system-i386 -kernel bin/jasos.bin
