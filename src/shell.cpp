@@ -1,13 +1,34 @@
 #include "kernel.h"
 #include "shell.h"
 
-Shell::Shell(volatile char *video_pointer, int w, int h)
+CommandHistory::CommandHistory()
 {
+    head = 0;
+    size = 0;
+}
+
+int CommandHistory::at(const char **string, int index)
+{
+    if (index >= size)
+        return 1;
+    *string = history[(head - index) % COMMAND_HISTORY_MAX_SIZE];
+    return 0;
+}
+
+bool CommandHistory::empty()
+{
+    return size == 0;
+}
+
+Shell::Shell(CommandHistory cmd_history, volatile char *video_pointer, int w, int h)
+{
+    command_history = cmd_history;
     video_pointer_origin = video_pointer;
     video_pointer_current = video_pointer;
     width = w;
     height = h;
     buffer_ptr = 0;
+    history_ptr = -1;
 }
 
 // Clears the shell and sets the pointer back to the upper left corner of the terminal.
@@ -56,6 +77,7 @@ void Shell::output(const char *string)
 // Prints the input indicator for the shell.
 void Shell::ready_input()
 {
+    history_ptr = -1;
     output("> ");
 }
 

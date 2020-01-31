@@ -37,7 +37,8 @@ void system(const char *command)
 // JASOS kernel entry point.
 extern "C" void kernel_main()
 {
-    Shell kshell{(volatile char*)0xB8000, 80, 25};
+    CommandHistory cmd_history;
+    Shell kshell{cmd_history, (volatile char*)0xB8000, 80, 25};
     shell = &kshell;
     shell->clear();
 
