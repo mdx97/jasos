@@ -1,10 +1,9 @@
 #include "gdt.h"
 #include "bits.h"
 
-Gdt::Gdt()
-{
-    next_descriptor = 0;
-}
+extern void load_gdt() __asm__("load_gdt");
+
+GdtRegister GDTR;
 
 /*
     Adds an entry to the table with the given arguments.
@@ -26,15 +25,14 @@ Gdt::Gdt()
     - 1: Invalid ring size.
     - 2: Limit larger than 20 bits.
 */
-int Gdt::add_entry(
-    uint32_t base_address, uint32_t limit, uint8_t ring,
+int create_entry(
+    GdtDescriptor *descriptor, uint32_t base_address, uint32_t limit, uint8_t ring,
     bool is_system_segment, bool is_executable, bool grows_up, bool read_write,
     bool uses_page_granularity, bool is_32_bit
 ){
     if (ring != 0 && ring != 3) return 1;
     if (limit > 0xFFFFF) return 2;
 
-    GdtDescriptor *descriptor = &descriptors[next_descriptor];
     descriptor->base1 = lsb(base_address, 16);
     descriptor->base2 = lsb(base_address >> 16, 8);
     descriptor->base3 = base_address >> 24;
@@ -47,8 +45,19 @@ int Gdt::add_entry(
 }
 
 // Populates the GDTR with the size and address of the GDT.
-void Gdt::construct_gdtr(GdtRegister *gdtr)
+void construct_gdtr(GdtDescriptor *table_pointer, GdtRegister *gdtr)
 {
-    gdtr->base_address = (uint32_t)&descriptors;
+    gdtr->base_address = (uint32_t)&table_pointer;
     gdtr->limit = 3 * sizeof(GdtDescriptor);
+}
+
+// Initializes the GDT and loads it into memory.
+void gdt_init()
+{
+    GdtDescriptor gdt[3];
+    create_entry(&gdt[0], 0, 0, 0, true, false, true, false, false, true);
+    create_entry(&gdt[1], 0, 0xFFFFF, 0, false, true, true, true, false, true);
+    create_entry(&gdt[2], 0, 0xFFFFF, 0, false, false, true, true, false, true);
+    construct_gdtr(gdt, &GDTR);
+    load_gdt();
 }
