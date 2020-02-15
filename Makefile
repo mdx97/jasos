@@ -13,14 +13,17 @@ kernel: src/kernel.c
 keyboard: src/keyboard.c
 	i686-elf-gcc -c src/keyboard.c -o build/keyboard.o -ffreestanding -O2 -Wall -Wextra
 
+memory: src/memory.c
+	i686-elf-gcc -c src/memory.c -o build/memory.o -ffreestanding -O2 -Wall -Wextra
+
 shell: src/shell.c
 	i686-elf-gcc -c src/shell.c -o build/shell.o -ffreestanding -O2 -Wall -Wextra
 
 string: src/string.c
 	i686-elf-gcc -c src/string.c -o build/string.o -ffreestanding -O2 -Wall -Wextra
 
-os: bits boot gdt kernel keyboard shell string
-	i686-elf-gcc -T src/linker.ld -o bin/jasos.bin -ffreestanding -O2 -nostdlib build/bits.o build/boot.o build/gdt.o build/kernel.o build/keyboard.o build/shell.o build/string.o -lgcc
+os: bits boot gdt kernel keyboard memory shell string
+	i686-elf-gcc -T src/linker.ld -o bin/jasos.bin -ffreestanding -O2 -nostdlib build/bits.o build/boot.o build/gdt.o build/kernel.o build/keyboard.o build/memory.o build/shell.o build/string.o -lgcc
 
 run: os
 	qemu-system-i386 -kernel bin/jasos.bin

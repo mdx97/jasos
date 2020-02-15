@@ -41,7 +41,7 @@ void handle_scroll()
 }
 
 // Prints a single character to the shell.
-void putchar(char c)
+void shell_putchar(char c)
 {
     switch (c) {
         case '\b': {
@@ -92,7 +92,7 @@ void shell_clear()
 {
     reset_pointer();
     for (int i = 0; i < (SHELL_WIDTH * SHELL_HEIGHT); i++)
-        putchar(' ');
+        shell_putchar(' ');
     reset_pointer();
 }
 
@@ -102,9 +102,9 @@ void shell_input(char c)
     if (c == '\b') {
         if (buffer_ptr == 0) return;
         buffer[buffer_ptr--] = '\0';
-        putchar('\b');
+        shell_putchar('\b');
     } else if (c == '\n') {
-        putchar('\n');
+        shell_putchar('\n');
         system((const char *)buffer);
         clear_buffer();
         shell_ready_input();
@@ -112,7 +112,7 @@ void shell_input(char c)
         if (buffer_ptr == SHELL_INPUT_BUFFER_SIZE - 1) return;
         buffer[buffer_ptr] = c;
         buffer_ptr++;
-        putchar(c);
+        shell_putchar(c);
     }
     
 }
@@ -124,7 +124,7 @@ void shell_output(const char *string)
     char c = string[0];
 
     while (c != '\0') {
-        putchar(c);
+        shell_putchar(c);
         i++;
         c = string[i];
     }

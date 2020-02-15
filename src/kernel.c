@@ -1,5 +1,6 @@
 #include "gdt.h"
 #include "keyboard.h"
+#include "memory.h"
 #include "shell.h"
 #include "string.h"
 
@@ -36,7 +37,11 @@ void kernel_main()
     gdt_init();
 
     shell_ready_input();
-    
+
+    char *array = (char*)allocate(4);
+    array = "abc\n";
+    shell_output((const char *)array);
+
     while (true) {
         char c = read_key();
         if (c != '\0')
