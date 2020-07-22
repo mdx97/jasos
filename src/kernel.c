@@ -1,7 +1,14 @@
 #include "gdt.h"
+#include "idt.h"
 #include "keyboard.h"
 #include "shell.h"
 #include "string.h"
+
+void shout()
+{
+    shell_output("ASM Shout!");
+    shell_output("\n");
+}
 
 // Invokes a textual command against the kernel.
 void system(const char *command)
@@ -34,7 +41,8 @@ void kernel_main()
 {
     shell_init();
     gdt_init();
-
+    idt_init();
+    
     shell_ready_input();
     
     while (true) {

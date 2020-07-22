@@ -76,10 +76,29 @@ _start:
 
 .end:
 
+extern shout
+
 global load_gdt:function
 load_gdt:
 	extern GDTR
 	lgdt [GDTR]
+
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	
+	jmp 0x08:.end
+
+.end:
+	ret
+
+global load_idt:function
+load_idt:
+	extern IDTR
+	lidt [IDTR]
 	ret
 
 global read_ps2_status:function
