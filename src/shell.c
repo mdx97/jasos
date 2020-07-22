@@ -101,7 +101,7 @@ void shell_input(char c)
 {
     if (c == '\b') {
         if (buffer_ptr == 0) return;
-        buffer[buffer_ptr--] = '\0';
+        buffer[--buffer_ptr] = '\0';
         putchar('\b');
     } else if (c == '\n') {
         putchar('\n');
