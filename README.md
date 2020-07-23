@@ -18,3 +18,5 @@ Alternatively, you can do it all in one shot with `make run`.
 
 ## Credits
 Credit to the OSDev community for the [Bare Bones Tutorial](https://wiki.osdev.org/Bare_Bones) which the multiboot implementation and linker script come from.
+
+Also for the code that disables the Real Mode cursor without BIOS interrupts.
