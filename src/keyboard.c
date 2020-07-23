@@ -1,3 +1,4 @@
+#include "asm.h"
 #include "keyboard.h"
 
 char scancode_keymap[] = {
@@ -7,8 +8,8 @@ char scancode_keymap[] = {
     'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '\0', '\0', '\0', ' ' 
 };
 
-extern uint8_t read_ps2_status() __asm__("read_ps2_status");
-extern uint8_t read_ps2_key() __asm__("read_ps2_key");
+ASM_FNC(read_ps2_status, uint8_t);
+ASM_FNC(read_ps2_key, uint8_t);
 
 // Polls for a key until one is pressed, then returns the corresponding character value.
 char read_key()

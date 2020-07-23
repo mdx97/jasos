@@ -121,3 +121,22 @@ read_ps2_key:
 	mov dx, 0x60
 	in eax, dx
 	ret
+
+extern isr_except0
+extern isr_except1
+
+global isr_except0_wrap:function
+isr_except0_wrap:
+	pushad
+	cld
+	call isr_except0
+	popad
+	iret
+
+global isr_except1_wrap:function
+isr_except1_wrap:
+	pushad
+	cld
+	call isr_except1
+	popad
+	iret

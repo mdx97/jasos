@@ -1,3 +1,4 @@
+#include "asm.h"
 #include "bits.h"
 #include "gdt.h"
 #include "shell.h"
@@ -5,7 +6,7 @@
 
 #define GDT_SIZE 3
 
-extern void load_gdt() __asm__("load_gdt");
+ASM_PROC(load_gdt);
 
 GdtRegister GDTR;
 GdtDescriptor gdt[GDT_SIZE];

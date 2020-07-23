@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include "bits.h"
 #include "idt.h"
+#include "isr.h"
 #include "shell.h"
 #include "utility.h"
 
@@ -12,7 +13,7 @@ const int GATE_TYPE_INTERRUPT_32 = 0xE;
 const int GATE_TYPE_TRAP_16 = 0x7;
 const int GATE_TYPE_TRAP_32 = 0xF;
 
-extern void load_idt() __asm__("load_idt");
+ASM_PROC(load_idt);
 
 IdtRegister IDTR;
 IdtDescriptor idt[IDT_SIZE];
@@ -39,11 +40,6 @@ void create_idt_entry(IdtDescriptor *descriptor, uint32_t offset, uint16_t selec
     descriptor->data |= 1 << 7;
 }
 
-void temp()
-{
-    shell_output_line("Hello world!");
-}
-
 // Populates the IDTR with the size and address of the IDT.
 void construct_idtr(IdtDescriptor *table_pointer, IdtRegister *idtr)
 {
@@ -54,8 +50,9 @@ void construct_idtr(IdtDescriptor *table_pointer, IdtRegister *idtr)
 // Initializes the IDT and loads it into memory.
 void idt_init()
 {
-    create_idt_entry(&idt[0], (uint32_t)&temp, 0x8, GATE_TYPE_TRAP_32, 0);
-    create_idt_entry(&idt[1], (uint32_t)&temp, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[0], (uint32_t)&isr_except0_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[1], (uint32_t)&isr_except1_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    // TODO: other descriptors.
     construct_idtr(idt, &IDTR);
     load_idt();
 }
