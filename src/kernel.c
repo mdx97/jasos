@@ -43,14 +43,6 @@ void kernel_main()
     gdt_init();
     idt_init();
 
-    // uint8_t a = 10;
-    // uint8_t b = 0;
-    // uint8_t d = a / b;
-    // char string[9];
-    // uint_to_string((uint32_t)d, (char *)&string);
-    
-    // shell_output_line((const char *)string);
-
     shell_ready_input();
 
     while (true) {

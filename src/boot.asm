@@ -124,14 +124,13 @@ read_ps2_key:
 
 extern isr_except0
 extern isr_except1
+extern isr_except8
+extern isr_except13
+extern isr_except14
 
 global isr_except0_wrap:function
 isr_except0_wrap:
-	pushad
-	cld
 	call isr_except0
-	popad
-	iret
 
 global isr_except1_wrap:function
 isr_except1_wrap:
@@ -140,3 +139,15 @@ isr_except1_wrap:
 	call isr_except1
 	popad
 	iret
+
+global isr_except8_wrap:function
+isr_except8_wrap:
+	call isr_except8
+
+global isr_except13_wrap:function
+isr_except13_wrap:
+	call isr_except13
+
+global isr_except14_wrap:function
+isr_except14_wrap:
+	call isr_except14

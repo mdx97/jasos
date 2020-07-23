@@ -50,9 +50,17 @@ void construct_idtr(IdtDescriptor *table_pointer, IdtRegister *idtr)
 // Initializes the IDT and loads it into memory.
 void idt_init()
 {
-    create_idt_entry(&idt[0], (uint32_t)&isr_except0_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
-    create_idt_entry(&idt[1], (uint32_t)&isr_except1_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    memory_fill(idt, 0, sizeof(idt));
+    create_idt_entry(&idt[0], (uint32_t)isr_except0_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[1], (uint32_t)isr_except1_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[8], (uint32_t)isr_except8_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[13], (uint32_t)isr_except13_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[14], (uint32_t)isr_except14_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     // TODO: other descriptors.
     construct_idtr(idt, &IDTR);
     load_idt();
+
+    memory_dump(&idt[0], 1, sizeof(IdtDescriptor));
+    shell_linebreak();
+    memory_dump(&idt[13], 1, sizeof(IdtDescriptor));
 }

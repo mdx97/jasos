@@ -42,6 +42,7 @@ void construct_gdtr(GdtDescriptor *table_pointer, GdtRegister *gdtr)
 // Initializes the GDT and loads it into memory.
 void gdt_init()
 {
+    memory_fill(gdt, 0, sizeof(gdt));
     create_gdt_entry(&gdt[0], 0, 0x00000, 0x80, 0x4);
     create_gdt_entry(&gdt[1], 0, 0xFFFFF, 0x9A, 0xC);
     create_gdt_entry(&gdt[2], 0, 0xFFFFF, 0x93, 0xC);

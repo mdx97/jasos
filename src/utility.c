@@ -6,6 +6,12 @@ const int UINT8_STRING_LENGTH = 9;
 const int UINT32_STRING_LENGTH = 11;
 const int UINT32_BITSTRING_LENGTH = 35;
 
+void memory_fill(void *pointer, uint8_t value, int count)
+{
+    for (int i = 0; i < count; i++)
+        *(uint8_t *)pointer = value;
+}
+
 // TODO: Probably should do some limit checking so we don't get overflow, but it's not too dangerous since we are using uints.
 uint32_t power(uint32_t base, uint32_t exponent)
 {
