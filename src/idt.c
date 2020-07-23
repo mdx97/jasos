@@ -57,7 +57,7 @@ int create_idt_entry(IdtDescriptor *descriptor, uint32_t offset, uint16_t select
 
 void temp()
 {
-    shell_output("Hello world!");
+    shell_output_line("Hello world!");
 }
 
 // Populates the IDTR with the size and address of the IDT.
@@ -74,18 +74,4 @@ void idt_init()
     create_idt_entry(&idt[1], (uint32_t)&temp, 0x8, GATE_TYPE_TRAP_32, 0);
     construct_idtr(idt, &IDTR);
     load_idt();
-    
-    //memory_dump((uint32_t)&idt[0], 1, 8);
-
-    // int a = 0;
-    // int b = GATE_TYPE_TRAP_32 / a;
-    // char string[11];
-    // uint_to_string(b, (char *)&string);
-    // shell_output(string);
-
-    // IdtDescriptor *pointer = (IdtDescriptor *)(IDTR.base_address + sizeof(IdtDescriptor));
-    // char string[35];
-    // uint_to_bitstring(pointer->data, (char *)&string);
-    // shell_output(string);
-    // shell_output("\n");
 }

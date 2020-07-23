@@ -130,6 +130,19 @@ void shell_output(const char *string)
     }
 }
 
+// Prints a string to the shell, followed by a newline.
+void shell_output_line(const char *string)
+{
+    shell_output(string);
+    shell_linebreak();
+}
+
+// Prints a newline.
+void shell_linebreak()
+{
+    shell_output("\n");
+}
+
 // Prints the input indicator for the shell.
 void shell_ready_input()
 {

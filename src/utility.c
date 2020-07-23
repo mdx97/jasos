@@ -1,6 +1,11 @@
 #include "shell.h"
 #include "utility.h"
 
+const int DIGIT_ASCII_OFFSET = 48;
+const int UINT8_STRING_LENGTH = 9;
+const int UINT32_STRING_LENGTH = 11;
+const int UINT32_BITSTRING_LENGTH = 35;
+
 // TODO: Probably should do some limit checking so we don't get overflow, but it's not too dangerous since we are using uints.
 uint32_t power(uint32_t base, uint32_t exponent)
 {
@@ -12,6 +17,8 @@ uint32_t power(uint32_t base, uint32_t exponent)
     return result;
 }
 
+// Simply converts an integer into it's string representation.
+// note: the string argument should be allocated with UINT32_STRING_LENGTH bytes.
 void uint_to_string(uint32_t number, char *string)
 {
     if (number == 0) {
@@ -20,12 +27,12 @@ void uint_to_string(uint32_t number, char *string)
         return;
     }
 
-    char buffer[11];
+    char buffer[UINT32_STRING_LENGTH];
     int size = 0;
 
     while (number > 0) {
         int digit = number % 10;
-        buffer[size] = (char)(digit + 48);
+        buffer[size] = (char)(digit + DIGIT_ASCII_OFFSET);
         number /= 10;
         size++;
     }
@@ -40,6 +47,9 @@ void uint_to_string(uint32_t number, char *string)
     string[size] = '\0';
 }
 
+// Converts an integer into a 32-bit "bit string".
+// example: 15 -> "0b00000000000000000000000000001111"
+// note: the string argument should be allocated with UINT32_BITSTRING_LENGTH bytes.
 void uint_to_bitstring(uint32_t number, char *string)
 {
     string[0] = '0';
@@ -55,30 +65,38 @@ void uint_to_bitstring(uint32_t number, char *string)
         }
     }
 
-    string[34] = '\0';
+    string[UINT32_BITSTRING_LENGTH - 1] = '\0';
 }
 
+// Helper function for the memory_dump() function to format bitstrings, or potential series of bitstrings.
 void memory_dump_bitstring_format(char *source, char *dest, uint8_t bytes)
 {
     for (int i = 0; i < bytes * 8; i++)
-        dest[bytes * 8 - i - 1] = source[33 - i];
+        dest[bytes * 8 - i - 1] = source[UINT32_BITSTRING_LENGTH - 2 - i];
     dest[bytes * 8] = '\0';
 }
 
+/*
+    Prints out memory contents.
+
+    Parameters:
+    - address:      The address to begin the dump.
+    - bytes_per:    The amount of bytes per dump row. Must be in the range [1, 4].
+    - count:        The number of rows to print.
+*/
 void memory_dump(uint32_t address, uint8_t bytes_per, uint32_t count)
 {
-    if (bytes_per > 4) {
+    if (bytes_per == 0 || bytes_per > 4) {
         shell_output("Memory dump called with invalid bytes_per argument: ");
-        char bytes_per_string[9];
+        char bytes_per_string[UINT8_STRING_LENGTH];
         uint_to_string(bytes_per, (char *)&bytes_per_string);
-        shell_output(bytes_per_string);
-        shell_output("\n");
+        shell_output_line(bytes_per_string);
         return;
     }
 
     uint8_t *pointer = (uint8_t *)address;
-    char temp[9];
-    char string[9];
+    char temp[UINT8_STRING_LENGTH];
+    char string[UINT8_STRING_LENGTH];
 
     for (uint32_t i = 0; i < count; i++) {
         shell_output("0b");
@@ -88,6 +106,6 @@ void memory_dump(uint32_t address, uint8_t bytes_per, uint32_t count)
             shell_output(string);
             pointer++;
         }
-        shell_output("\n");
+        shell_linebreak();
     }
 }

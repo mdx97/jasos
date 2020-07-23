@@ -6,8 +6,7 @@
 
 void shout()
 {
-    shell_output("ASM Shout!");
-    shell_output("\n");
+    shell_output_line("ASM Shout!");
 }
 
 // Invokes a textual command against the kernel.
@@ -16,9 +15,9 @@ void system(const char *command)
     if (string_equal(command, "clear")) {
         shell_clear();
     } else if (string_equal(command, "help")) {
-        shell_output("The kernel supports the following built-in commands:\n- clear: Clears the screen\n- help: How did you get here?\n- sys: Prints basic system information\n");
+        shell_output_line("The kernel supports the following built-in commands:\n- clear: Clears the screen\n- help: How did you get here?\n- sys: Prints basic system information");
     } else if (string_equal(command, "sys")) {
-        shell_output("\n"
+        shell_output_line("\n"
              " JJJJJJJJJ  AAAAAAAAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
              " JJJJJJJJJ  AAAAAAAAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
              "    JJJ     AAA   AAA  SSS        OOO   OOO  SSS      \n"
@@ -29,10 +28,10 @@ void system(const char *command)
              "JJJ JJJ     AAA   AAA        SSS  OOO   OOO        SSS\n"
              "JJJJJJJ     AAA   AAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
              "JJJJJJJ     AAA   AAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n\n"
-             "Kernel Version: 0.01\n"
+             "Kernel Version: 0.01"
         );
     } else if (!string_equal(command, "")) {
-        shell_output("Command not found! Type help to view available commands.\n");
+        shell_output_line("Command not found! Type help to view available commands.");
     }
 }
 
