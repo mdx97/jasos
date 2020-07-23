@@ -22,27 +22,12 @@ IdtDescriptor idt[IDT_SIZE];
 
     Parameters:
     - offset:               The address of the ISR.
-    - selector:             Selector of the ISR.
+    - selector:             Segment selector for the ISR's CS.
     - gate_type:            The IDT gate type.
     - dpl:                  Descriptor privilege level. 2-bit value.
-
-    Returns:
-    - 0: Successful.
-    - 1: Invalid gate type.
-    - 2: Descriptor privilege level too large.
 */
-int create_idt_entry(IdtDescriptor *descriptor, uint32_t offset, uint16_t selector, uint8_t gate_type, uint8_t dpl)
+void create_idt_entry(IdtDescriptor *descriptor, uint32_t offset, uint16_t selector, uint8_t gate_type, uint8_t dpl)
 {
-    // TODO: Probably put these in some form of set.
-    if (gate_type != GATE_TYPE_TASK_32 && 
-        gate_type != GATE_TYPE_INTERRUPT_16 && 
-        gate_type != GATE_TYPE_INTERRUPT_32 && 
-        gate_type != GATE_TYPE_TRAP_16 && 
-        gate_type != GATE_TYPE_TRAP_32) return 1;
-    
-    // TODO: This may only have valid values of 0 and 3? Need to do more research.
-    if (dpl >= 4) return 2;
-
     descriptor->offset_low = lsb(offset, 16);
     descriptor->offset_high = offset >> 16;
     descriptor->selector = selector;
@@ -52,7 +37,6 @@ int create_idt_entry(IdtDescriptor *descriptor, uint32_t offset, uint16_t select
     descriptor->data |= (gate_type == GATE_TYPE_TASK_32) << 4;
     descriptor->data |= dpl << 5;
     descriptor->data |= 1 << 7;
-    return 0;
 }
 
 void temp()

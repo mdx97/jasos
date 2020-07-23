@@ -28,7 +28,7 @@ void system(const char *command)
              "JJJ JJJ     AAA   AAA        SSS  OOO   OOO        SSS\n"
              "JJJJJJJ     AAA   AAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
              "JJJJJJJ     AAA   AAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n\n"
-             "Kernel Version: 0.01"
+             "Kernel Version: 0.01\n"
         );
     } else if (!string_equal(command, "")) {
         shell_output_line("Command not found! Type help to view available commands.");
