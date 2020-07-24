@@ -51,16 +51,27 @@ void construct_idtr(IdtDescriptor *table_pointer, IdtRegister *idtr)
 void idt_init()
 {
     memory_fill(idt, 0, sizeof(idt));
+
     create_idt_entry(&idt[0], (uint32_t)isr_except0_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[1], (uint32_t)isr_except1_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[2], (uint32_t)isr_except2_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[3], (uint32_t)isr_except3_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[4], (uint32_t)isr_except4_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[5], (uint32_t)isr_except5_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[6], (uint32_t)isr_except6_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[7], (uint32_t)isr_except7_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[8], (uint32_t)isr_except8_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[9], (uint32_t)isr_except9_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[10], (uint32_t)isr_except10_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[11], (uint32_t)isr_except11_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[12], (uint32_t)isr_except12_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[13], (uint32_t)isr_except13_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[14], (uint32_t)isr_except14_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
-    // TODO: other descriptors.
+    create_idt_entry(&idt[16], (uint32_t)isr_except16_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[17], (uint32_t)isr_except17_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[18], (uint32_t)isr_except18_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+    create_idt_entry(&idt[19], (uint32_t)isr_except19_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
+
     construct_idtr(idt, &IDTR);
     load_idt();
-
-    memory_dump(&idt[0], 1, sizeof(IdtDescriptor));
-    shell_linebreak();
-    memory_dump(&idt[13], 1, sizeof(IdtDescriptor));
 }

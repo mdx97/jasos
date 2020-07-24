@@ -124,9 +124,23 @@ read_ps2_key:
 
 extern isr_except0
 extern isr_except1
+extern isr_except2
+extern isr_except3
+extern isr_except4
+extern isr_except5
+extern isr_except6
+extern isr_except7
 extern isr_except8
+extern isr_except9
+extern isr_except10
+extern isr_except11
+extern isr_except12
 extern isr_except13
 extern isr_except14
+extern isr_except16
+extern isr_except17
+extern isr_except18
+extern isr_except19
 
 global isr_except0_wrap:function
 isr_except0_wrap:
@@ -134,15 +148,55 @@ isr_except0_wrap:
 
 global isr_except1_wrap:function
 isr_except1_wrap:
-	pushad
-	cld
 	call isr_except1
-	popad
-	iret
 
+global isr_except2_wrap:function
+isr_except2_wrap:
+	;pushad
+	;cld
+	call isr_except2
+	;popad
+	;iret
+
+global isr_except3_wrap:function
+isr_except3_wrap:
+	call isr_except3
+	
+global isr_except4_wrap:function
+isr_except4_wrap:
+	call isr_except4
+
+global isr_except5_wrap:function
+isr_except5_wrap:
+	call isr_except5
+
+global isr_except6_wrap:function
+isr_except6_wrap:
+	call isr_except6
+
+global isr_except7_wrap:function
+isr_except7_wrap:
+	call isr_except7
+	
 global isr_except8_wrap:function
 isr_except8_wrap:
 	call isr_except8
+
+global isr_except9_wrap:function
+isr_except9_wrap:
+	call isr_except9
+
+global isr_except10_wrap:function
+isr_except10_wrap:
+	call isr_except10
+
+global isr_except11_wrap:function
+isr_except11_wrap:
+	call isr_except11
+
+global isr_except12_wrap:function
+isr_except12_wrap:
+	call isr_except13
 
 global isr_except13_wrap:function
 isr_except13_wrap:
@@ -151,3 +205,19 @@ isr_except13_wrap:
 global isr_except14_wrap:function
 isr_except14_wrap:
 	call isr_except14
+
+global isr_except16_wrap:function
+isr_except16_wrap:
+	call isr_except16
+
+global isr_except17_wrap:function
+isr_except17_wrap:
+	call isr_except17
+
+global isr_except18_wrap:function
+isr_except18_wrap:
+	call isr_except18
+
+global isr_except19_wrap:function
+isr_except19_wrap:
+	call isr_except19
