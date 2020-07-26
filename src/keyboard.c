@@ -1,5 +1,9 @@
+#include <stdint.h>
 #include "asm.h"
 #include "keyboard.h"
+#include "shell.h"
+
+const int KEYBOARD_DATA_PORT = 0x60;
 
 char scancode_keymap[] = {
     '\0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', 
@@ -8,17 +12,10 @@ char scancode_keymap[] = {
     'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '\0', '\0', '\0', ' ' 
 };
 
-ASM_FNC(read_ps2_status, uint8_t);
-ASM_FNC(read_ps2_key, uint8_t);
-
-// Polls for a key until one is pressed, then returns the corresponding character value.
-char read_key()
+void keydown()
 {
-    while (true) {
-        uint8_t kb_status = read_ps2_status();
-        if ((kb_status & 0x1) == 1) {
-            uint8_t scancode = read_ps2_key() - 1;
-            return scancode_keymap[scancode];
-        }
-    }
+    uint8_t scancode = in8(KEYBOARD_DATA_PORT) - 1;
+    char c = scancode_keymap[scancode];
+    if (c != '\0')
+        shell_input(c);
 }

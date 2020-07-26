@@ -1,6 +1,8 @@
+#include "asm.h"
 #include "gdt.h"
 #include "idt.h"
 #include "keyboard.h"
+#include "pic.h"
 #include "shell.h"
 #include "string.h"
 #include "utility.h"
@@ -42,12 +44,11 @@ void kernel_main()
     shell_init();
     gdt_init();
     idt_init();
+    pic_init();
+    
+    enable_hardware_interrupts();
 
     shell_ready_input();
 
-    while (true) {
-        char c = read_key();
-        if (c != '\0')
-            shell_input(c);
-    } 
+    while (true);
 }

@@ -110,17 +110,7 @@ load_idt:
 	lidt [IDTR]
 	ret
 
-global read_ps2_status:function
-read_ps2_status:
-	mov dx, 0x64
-	in eax, dx
-	ret
-
-global read_ps2_key:function
-read_ps2_key:
-	mov dx, 0x60
-	in eax, dx
-	ret
+; TODO: Should refactor these so that we remove duplicated code.
 
 extern isr_except0
 extern isr_except1
@@ -221,3 +211,169 @@ isr_except18_wrap:
 global isr_except19_wrap:function
 isr_except19_wrap:
 	call isr_except19
+
+extern isr_irq0
+extern isr_irq1
+extern isr_irq2
+extern isr_irq3
+extern isr_irq4
+extern isr_irq5
+extern isr_irq6
+extern isr_irq7
+extern isr_irq8
+extern isr_irq9
+extern isr_irq10
+extern isr_irq11
+extern isr_irq12
+extern isr_irq13
+extern isr_irq14
+extern isr_irq15
+
+eoi:
+	mov al, 0x20
+	out 0x20, al
+	ret
+
+global isr_irq0_wrap:function
+isr_irq0_wrap:
+	pushad
+	;cld
+	call isr_irq0
+	popad
+	call eoi
+	iret
+
+global isr_irq1_wrap:function
+isr_irq1_wrap:
+	pushad
+	;cld
+	call isr_irq1
+	popad
+	call eoi
+	iret
+
+global isr_irq2_wrap:function
+isr_irq2_wrap:
+	pushad
+	;cld
+	call isr_irq2
+	popad
+	call eoi
+	iret
+
+global isr_irq3_wrap:function
+isr_irq3_wrap:
+	pushad
+	;cld
+	call isr_irq3
+	popad
+	call eoi
+	iret
+
+global isr_irq4_wrap:function
+isr_irq4_wrap:
+	pushad
+	;cld
+	call isr_irq4
+	popad
+	call eoi
+	iret
+
+global isr_irq5_wrap:function
+isr_irq5_wrap:
+	pushad
+	;cld
+	call isr_irq5
+	popad
+	call eoi
+	iret
+
+global isr_irq6_wrap:function
+isr_irq6_wrap:
+	pushad
+	;cld
+	call isr_irq6
+	popad
+	call eoi
+	iret
+
+global isr_irq7_wrap:function
+isr_irq7_wrap:
+	pushad
+	;cld
+	call isr_irq7
+	popad
+	call eoi
+	iret
+
+global isr_irq8_wrap:function
+isr_irq8_wrap:
+	pushad
+	;cld
+	call isr_irq8
+	popad
+	call eoi
+	iret
+
+global isr_irq9_wrap:function
+isr_irq9_wrap:
+	pushad
+	;cld
+	call isr_irq9
+	popad
+	call eoi
+	iret
+
+global isr_irq10_wrap:function
+isr_irq10_wrap:
+	pushad
+	;cld
+	call isr_irq10
+	popad
+	call eoi
+	iret
+
+global isr_irq11_wrap:function
+isr_irq11_wrap:
+	pushad
+	;cld
+	call isr_irq11
+	popad
+	call eoi
+	iret
+
+global isr_irq12_wrap:function
+isr_irq12_wrap:
+	pushad
+	;cld
+	call isr_irq12
+	popad
+	call eoi
+	iret
+
+global isr_irq13_wrap:function
+isr_irq13_wrap:
+	pushad
+	;cld
+	call isr_irq13
+	popad
+	call eoi
+	iret
+
+global isr_irq14_wrap:function
+isr_irq14_wrap:
+	pushad
+	;cld
+	call isr_irq14
+	popad
+	call eoi
+	iret
+
+global isr_irq15_wrap:function
+isr_irq15_wrap:
+	pushad
+	;cld
+	call isr_irq15
+	popad
+	call eoi
+	iret

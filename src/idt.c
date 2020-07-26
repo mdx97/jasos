@@ -72,6 +72,23 @@ void idt_init()
     create_idt_entry(&idt[18], (uint32_t)isr_except18_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[19], (uint32_t)isr_except19_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
 
+    create_idt_entry(&idt[32], (uint32_t)isr_irq0_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[33], (uint32_t)isr_irq1_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[34], (uint32_t)isr_irq2_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[35], (uint32_t)isr_irq3_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[36], (uint32_t)isr_irq4_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[37], (uint32_t)isr_irq5_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[38], (uint32_t)isr_irq6_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[39], (uint32_t)isr_irq7_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[40], (uint32_t)isr_irq8_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[41], (uint32_t)isr_irq9_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[42], (uint32_t)isr_irq10_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[43], (uint32_t)isr_irq11_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[44], (uint32_t)isr_irq12_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[45], (uint32_t)isr_irq13_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[46], (uint32_t)isr_irq14_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+    create_idt_entry(&idt[47], (uint32_t)isr_irq15_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
+
     construct_idtr(idt, &IDTR);
     load_idt();
 }
