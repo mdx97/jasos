@@ -6,10 +6,23 @@ const int UINT8_STRING_LENGTH = 9;
 const int UINT32_STRING_LENGTH = 11;
 const int UINT32_BITSTRING_LENGTH = 35;
 
+// Copys a section of memory from the source to the target.
+void memory_copy(void *source, void *target, int count)
+{
+    for (int i = 0; i < count; i++) {
+        *(uint8_t *)target = *(uint8_t *)source;
+        source++;
+        target++;
+    }
+}
+
+// Fills a section of memory with the given value.
 void memory_fill(void *pointer, uint8_t value, int count)
 {
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++) {
         *(uint8_t *)pointer = value;
+        pointer++;
+    }
 }
 
 // TODO: Probably should do some limit checking so we don't get overflow, but it's not too dangerous since we are using uints.

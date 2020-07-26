@@ -11,3 +11,16 @@ bool string_equal(const char *string1, const char *string2)
 
     return string1[i] == '\0' && string2[i] == '\0';
 }
+
+// Returns the length of a string.
+int string_length(const char *string)
+{
+    int i = 0;
+    while (true) {
+        if (string[i] == '\0')
+            break;
+        i++;
+    }
+
+    return i;
+}

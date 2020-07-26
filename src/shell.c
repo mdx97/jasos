@@ -1,17 +1,31 @@
 #include "kernel.h"
 #include "shell.h"
+#include "string.h"
+#include "utility.h"
 
+#define HISTORY_MAX 20
 #define SHELL_INPUT_BUFFER_SIZE 256
-#define SHELL_HEIGHT 25
-#define SHELL_WIDTH 80
-#define SHELL_LINE_LENGTH SHELL_WIDTH * 2
-#define VIDEO_MEMORY_START 0xB8000
+
+const int SHELL_HEIGHT = 25;
+const int SHELL_WIDTH = 80;
+const int SHELL_LINE_LENGTH = 2 * SHELL_WIDTH;
+const int VIDEO_MEMORY_START = 0xB8000;
 
 const char *SHELL_INPUT_INDICATOR = "> ";
 
+// TODO: Should probably use other keys for these, but our keyboard driver is limited at the moment.
+const char SHELL_SCROLL_DOWN_KEY = '-';
+const char SHELL_SCROLL_UP_KEY = '=';
+
 volatile char *video_pointer;
+
 char buffer[SHELL_INPUT_BUFFER_SIZE];
 int buffer_ptr;
+
+char history[HISTORY_MAX][SHELL_INPUT_BUFFER_SIZE];
+int history_ptr;
+int history_count;
+int history_scroll;
 
 // Clears the input buffer.
 void clear_buffer()
@@ -30,7 +44,7 @@ void scroll()
     volatile char *pointer = (volatile char *)VIDEO_MEMORY_START;
 
     for (int i = 0; i < full_size; i += 2)
-        pointer[i] = pointer[i + SHELL_LINE_LENGTH];
+        pointer[i] = pointer[i + (SHELL_LINE_LENGTH)];
 
     for (int i = shift_size; i < shift_size; i += 2)
         pointer[i] = ' ';
@@ -83,6 +97,8 @@ void shell_init()
 {
     video_pointer = (volatile char *)VIDEO_MEMORY_START;
     buffer_ptr = 0;
+    history_ptr = 0;
+    history_scroll = 0;
     shell_clear();
 }
 
@@ -97,6 +113,33 @@ void shell_clear()
     video_pointer = (volatile char *)VIDEO_MEMORY_START;
 }
 
+// Sets the current input to the correct history value based off of the scroll value.
+void load_history_entry()
+{
+    for (int i = 0; i < buffer_ptr * 2; i += 2) {
+        *video_pointer = ' ';
+        video_pointer -= 2;
+    }
+    
+    *video_pointer = ' ';
+    buffer_ptr = 0;
+    buffer[0] = '\0';
+
+    if (history_scroll != 0) {
+        // TODO: Prefer modulo, but negatives seem to be overflowing.
+        int index = history_scroll > history_ptr ?
+            history_ptr + (HISTORY_MAX - history_scroll) :
+            history_ptr - history_scroll;
+        
+        char *pointer = (char *)&history[index];
+        int size = string_length(pointer);
+        memory_copy(pointer, buffer, size);
+        buffer[size] = '\0';
+        buffer_ptr = size;
+        shell_write(pointer);
+    }
+}
+
 // Sends a character to be processed by the shell.
 void shell_input(char c)
 {
@@ -109,14 +152,35 @@ void shell_input(char c)
     } else if (c == '\n') {
         putchar('\n');
         system((const char *)buffer);
+
+        memory_copy(buffer, &history[history_ptr], buffer_ptr);
+        history[history_ptr][buffer_ptr] = '\0';
+
+        history_scroll = 0;
+        history_ptr++;
+        history_ptr %= HISTORY_MAX;
+        
+        if (history_count < HISTORY_MAX)
+            history_count++;
+
         clear_buffer();
         shell_write(SHELL_INPUT_INDICATOR);
+
+    } else if (c == SHELL_SCROLL_DOWN_KEY) {
+        if (history_scroll != history_count)
+            history_scroll++;
+        load_history_entry();
+
+    } else if (c == SHELL_SCROLL_UP_KEY) {
+        if (history_scroll != 0)
+            history_scroll--;
+        load_history_entry();
 
     } else {
         if (buffer_ptr == SHELL_INPUT_BUFFER_SIZE - 1) 
             return;
         buffer[buffer_ptr] = c;
-        buffer_ptr++;
+        buffer[++buffer_ptr] = '\0';
         putchar(c);
     }
     

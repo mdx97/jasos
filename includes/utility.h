@@ -8,6 +8,7 @@ extern const int
     UINT32_MAX_DIGITS,
     UINT32_BITSTRING_LENGTH;
 
+void memory_copy(void *source, void *target, int count);
 void memory_fill(void *pointer, uint8_t value, int count);
 void uint_to_string(uint32_t number, char *string);
 void uint_to_bitstring(uint32_t number, char *string);
