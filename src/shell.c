@@ -27,7 +27,7 @@ void scroll()
     volatile char *pointer = (volatile char *)VIDEO_MEMORY_START;
     for (int i = 0; i < end_existing; i += 2)
         pointer[i] = pointer[i + (SHELL_WIDTH * 2)];
-    for (int i = end_existing + 2; i < end_terminal; i += 2)
+    for (int i = end_existing; i < end_terminal; i += 2)
         pointer[i] = ' ';
 }
 
