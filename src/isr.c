@@ -4,8 +4,8 @@
 
 void exception_halt(const char *description)
 {
-    shell_output(description);
-    shell_output_line("! Halting OS...");
+    shell_write(description);
+    shell_writeline("! Halting OS...");
     __asm__("hlt");
 }
 

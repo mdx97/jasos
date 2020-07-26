@@ -15,11 +15,13 @@ void memory_fill(void *pointer, uint8_t value, int count)
 // TODO: Probably should do some limit checking so we don't get overflow, but it's not too dangerous since we are using uints.
 uint32_t power(uint32_t base, uint32_t exponent)
 {
-    if (exponent == 0) return 1;
+    if (exponent == 0) 
+        return 1;
 
     uint32_t result = base;
     for (uint32_t i = 1; i < exponent; i++)
         result *= base;
+
     return result;
 }
 
@@ -79,6 +81,7 @@ void memory_dump_bitstring_format(char *source, char *dest, uint8_t bytes)
 {
     for (int i = 0; i < bytes * 8; i++)
         dest[bytes * 8 - i - 1] = source[UINT32_BITSTRING_LENGTH - 2 - i];
+    
     dest[bytes * 8] = '\0';
 }
 
@@ -93,10 +96,10 @@ void memory_dump_bitstring_format(char *source, char *dest, uint8_t bytes)
 void memory_dump(uint32_t address, uint8_t bytes_per, uint32_t count)
 {
     if (bytes_per == 0 || bytes_per > 4) {
-        shell_output("Memory dump called with invalid bytes_per argument: ");
+        shell_write("Memory dump called with invalid bytes_per argument: ");
         char bytes_per_string[UINT8_STRING_LENGTH];
         uint_to_string(bytes_per, (char *)&bytes_per_string);
-        shell_output_line(bytes_per_string);
+        shell_writeline(bytes_per_string);
         return;
     }
 
@@ -105,13 +108,13 @@ void memory_dump(uint32_t address, uint8_t bytes_per, uint32_t count)
     char string[UINT8_STRING_LENGTH];
 
     for (uint32_t i = 0; i < count; i++) {
-        shell_output("0b");
+        shell_write("0b");
         for (uint8_t j = 0; j < bytes_per; j++) {
             uint_to_bitstring(*pointer, (char *)&temp);
             memory_dump_bitstring_format((char *)&temp, (char *)&string, bytes_per);
-            shell_output(string);
+            shell_write(string);
             pointer++;
         }
-        shell_linebreak();
+        shell_write("\n");
     }
 }

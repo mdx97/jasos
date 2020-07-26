@@ -8,5 +8,6 @@ bool string_equal(const char *string1, const char *string2)
         if (string1[i] != string2[i]) return false;
         i++;
     }
+
     return string1[i] == '\0' && string2[i] == '\0';
 }

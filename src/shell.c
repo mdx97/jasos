@@ -4,7 +4,10 @@
 #define SHELL_INPUT_BUFFER_SIZE 256
 #define SHELL_HEIGHT 25
 #define SHELL_WIDTH 80
+#define SHELL_LINE_LENGTH SHELL_WIDTH * 2
 #define VIDEO_MEMORY_START 0xB8000
+
+const char *SHELL_INPUT_INDICATOR = "> ";
 
 volatile char *video_pointer;
 char buffer[SHELL_INPUT_BUFFER_SIZE];
@@ -19,24 +22,26 @@ void clear_buffer()
 }
 
 // Scrolls the contents of the shell down by one line.
-// TODO: This probably needs to be refactored, it's kinda gross.
 void scroll()
 {
-    int end_terminal = 2 * SHELL_WIDTH * SHELL_HEIGHT;
-    int end_existing = end_terminal - (2 * SHELL_WIDTH);
+    int full_size = SHELL_LINE_LENGTH * SHELL_HEIGHT;
+    int shift_size = full_size - SHELL_LINE_LENGTH;
+
     volatile char *pointer = (volatile char *)VIDEO_MEMORY_START;
-    for (int i = 0; i < end_existing; i += 2)
-        pointer[i] = pointer[i + (SHELL_WIDTH * 2)];
-    for (int i = end_existing; i < end_terminal; i += 2)
+
+    for (int i = 0; i < full_size; i += 2)
+        pointer[i] = pointer[i + SHELL_LINE_LENGTH];
+
+    for (int i = shift_size; i < shift_size; i += 2)
         pointer[i] = ' ';
 }
 
 // Scrolls the contents of the shell if needed.
 void handle_scroll()
 {
-    if ((int)video_pointer >= VIDEO_MEMORY_START + (2 * SHELL_WIDTH * SHELL_HEIGHT)) {
+    if ((int)video_pointer >= VIDEO_MEMORY_START + (SHELL_LINE_LENGTH * SHELL_HEIGHT)) {
         scroll();
-        video_pointer -= (SHELL_WIDTH * 2);
+        video_pointer -= SHELL_LINE_LENGTH;
     }
 }
 
@@ -53,8 +58,8 @@ void putchar(char c)
         }
 
         case '\n': {
-            int offset = ((int)video_pointer - VIDEO_MEMORY_START) % (SHELL_WIDTH * 2);
-            video_pointer += ((SHELL_WIDTH * 2) - offset);
+            int offset = ((int)video_pointer - VIDEO_MEMORY_START) % SHELL_LINE_LENGTH;
+            video_pointer += (SHELL_LINE_LENGTH - offset);
             handle_scroll();
             break;
         }
@@ -73,16 +78,10 @@ void putchar(char c)
     }
 }
 
-// Sets the video pointer back to it's original position.
-void reset_pointer()
-{
-    video_pointer = (volatile char *)VIDEO_MEMORY_START;
-}
-
 // Initializes the shell.
 void shell_init()
 {
-    reset_pointer();
+    video_pointer = (volatile char *)VIDEO_MEMORY_START;
     buffer_ptr = 0;
     shell_clear();
 }
@@ -90,26 +89,32 @@ void shell_init()
 // Clears the shell and sets the pointer back to the upper left corner of the terminal.
 void shell_clear()
 {
-    reset_pointer();
+    video_pointer = (volatile char *)VIDEO_MEMORY_START;
+
     for (int i = 0; i < (SHELL_WIDTH * SHELL_HEIGHT); i++)
         putchar(' ');
-    reset_pointer();
+
+    video_pointer = (volatile char *)VIDEO_MEMORY_START;
 }
 
 // Sends a character to be processed by the shell.
 void shell_input(char c)
 {
     if (c == '\b') {
-        if (buffer_ptr == 0) return;
+        if (buffer_ptr == 0)
+            return;
         buffer[--buffer_ptr] = '\0';
         putchar('\b');
+
     } else if (c == '\n') {
         putchar('\n');
         system((const char *)buffer);
         clear_buffer();
-        shell_ready_input();
+        shell_write(SHELL_INPUT_INDICATOR);
+
     } else {
-        if (buffer_ptr == SHELL_INPUT_BUFFER_SIZE - 1) return;
+        if (buffer_ptr == SHELL_INPUT_BUFFER_SIZE - 1) 
+            return;
         buffer[buffer_ptr] = c;
         buffer_ptr++;
         putchar(c);
@@ -118,7 +123,7 @@ void shell_input(char c)
 }
 
 // Prints a string to the shell.
-void shell_output(const char *string)
+void shell_write(const char *string)
 {
     int i = 0;
     char c = string[0];
@@ -131,20 +136,8 @@ void shell_output(const char *string)
 }
 
 // Prints a string to the shell, followed by a newline.
-void shell_output_line(const char *string)
+void shell_writeline(const char *string)
 {
-    shell_output(string);
-    shell_linebreak();
-}
-
-// Prints a newline.
-void shell_linebreak()
-{
-    shell_output("\n");
-}
-
-// Prints the input indicator for the shell.
-void shell_ready_input()
-{
-    shell_output("> ");
+    shell_write(string);
+    shell_write("\n");
 }
