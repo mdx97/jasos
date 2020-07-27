@@ -20,7 +20,9 @@ const char SHELL_SCROLL_UP_KEY = '=';
 volatile char *video_pointer;
 
 char buffer[SHELL_INPUT_BUFFER_SIZE];
+char buffer_hold[SHELL_INPUT_BUFFER_SIZE];
 int buffer_ptr;
+int buffer_hold_size;
 
 char history[HISTORY_MAX][SHELL_INPUT_BUFFER_SIZE];
 int history_ptr;
@@ -96,7 +98,10 @@ void putchar(char c)
 void shell_init()
 {
     video_pointer = (volatile char *)VIDEO_MEMORY_START;
+    buffer[0] = '\0';
+    buffer_hold[0] = '\0';
     buffer_ptr = 0;
+    buffer_hold_size = 0;
     history_ptr = 0;
     history_scroll = 0;
     shell_clear();
@@ -137,6 +142,11 @@ void load_history_entry()
         buffer[size] = '\0';
         buffer_ptr = size;
         shell_write(pointer);
+    } else {
+        memory_copy(buffer_hold, buffer, buffer_hold_size);
+        buffer[buffer_hold_size] = '\0';
+        buffer_ptr = buffer_hold_size;
+        shell_write(buffer);
     }
 }
 
@@ -169,13 +179,21 @@ void shell_input(char c)
         shell_write(SHELL_INPUT_INDICATOR);
 
     } else if (c == SHELL_SCROLL_DOWN_KEY) {
+        if (history_scroll == 0 && !string_equal(buffer, buffer_hold)) {
+            memory_copy(buffer, buffer_hold, buffer_ptr);
+            buffer_hold_size = buffer_ptr;
+            buffer_hold[buffer_ptr] = '\0';
+        }
+
         if (history_scroll != history_count)
             history_scroll++;
+
         load_history_entry();
 
     } else if (c == SHELL_SCROLL_UP_KEY) {
         if (history_scroll != 0)
             history_scroll--;
+
         load_history_entry();
 
     } else {
