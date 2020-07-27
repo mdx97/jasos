@@ -153,15 +153,17 @@ void shell_input(char c)
         putchar('\n');
         system((const char *)buffer);
 
-        memory_copy(buffer, &history[history_ptr], buffer_ptr);
-        history[history_ptr][buffer_ptr] = '\0';
+        if (string_length(buffer) > 0) {
+            memory_copy(buffer, &history[history_ptr], buffer_ptr);
+            history[history_ptr][buffer_ptr] = '\0';
 
-        history_scroll = 0;
-        history_ptr++;
-        history_ptr %= HISTORY_MAX;
-        
-        if (history_count < HISTORY_MAX)
-            history_count++;
+            history_scroll = 0;
+            history_ptr++;
+            history_ptr %= HISTORY_MAX;
+            
+            if (history_count < HISTORY_MAX)
+                history_count++;
+        }
 
         clear_buffer();
         shell_write(SHELL_INPUT_INDICATOR);
