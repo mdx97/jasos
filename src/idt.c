@@ -1,7 +1,8 @@
 #include <stdbool.h>
+#include <stdint.h>
+#include "asm.h"
 #include "bits.h"
 #include "idt.h"
-#include "isr.h"
 #include "shell.h"
 #include "utility.h"
 
@@ -13,7 +14,57 @@ const int GATE_TYPE_INTERRUPT_32 = 0xE;
 const int GATE_TYPE_TRAP_16 = 0x7;
 const int GATE_TYPE_TRAP_32 = 0xF;
 
+ASM_PROC(isr_except0_wrap);
+ASM_PROC(isr_except1_wrap);
+ASM_PROC(isr_except2_wrap);
+ASM_PROC(isr_except3_wrap);
+ASM_PROC(isr_except4_wrap);
+ASM_PROC(isr_except5_wrap);
+ASM_PROC(isr_except6_wrap);
+ASM_PROC(isr_except7_wrap);
+ASM_PROC(isr_except8_wrap);
+ASM_PROC(isr_except9_wrap);
+ASM_PROC(isr_except10_wrap);
+ASM_PROC(isr_except11_wrap);
+ASM_PROC(isr_except12_wrap);
+ASM_PROC(isr_except13_wrap);
+ASM_PROC(isr_except14_wrap);
+ASM_PROC(isr_except16_wrap);
+ASM_PROC(isr_except17_wrap);
+ASM_PROC(isr_except18_wrap);
+ASM_PROC(isr_except19_wrap);
+
+ASM_PROC(isr_irq0_wrap);
+ASM_PROC(isr_irq1_wrap);
+ASM_PROC(isr_irq2_wrap);
+ASM_PROC(isr_irq3_wrap);
+ASM_PROC(isr_irq4_wrap);
+ASM_PROC(isr_irq5_wrap);
+ASM_PROC(isr_irq6_wrap);
+ASM_PROC(isr_irq7_wrap);
+ASM_PROC(isr_irq8_wrap);
+ASM_PROC(isr_irq9_wrap);
+ASM_PROC(isr_irq10_wrap);
+ASM_PROC(isr_irq11_wrap);
+ASM_PROC(isr_irq12_wrap);
+ASM_PROC(isr_irq13_wrap);
+ASM_PROC(isr_irq14_wrap);
+ASM_PROC(isr_irq15_wrap);
+
 ASM_PROC(load_idt);
+
+typedef struct __attribute__((__packed__)) t_idt_register {
+    uint16_t limit;
+    uint32_t base_address;
+} IdtRegister;
+
+typedef struct __attribute__((__packed__)) t_idt_descriptor {
+    uint16_t offset_low;
+    uint16_t selector;
+    uint8_t unused;
+    uint8_t data;
+    uint16_t offset_high;
+} IdtDescriptor;
 
 IdtRegister IDTR;
 IdtDescriptor idt[IDT_SIZE];
@@ -38,13 +89,6 @@ void create_idt_entry(IdtDescriptor *descriptor, uint32_t offset, uint16_t selec
     descriptor->data |= (gate_type == GATE_TYPE_TASK_32) << 4;
     descriptor->data |= dpl << 5;
     descriptor->data |= 1 << 7;
-}
-
-// Populates the IDTR with the size and address of the IDT.
-void construct_idtr(IdtDescriptor *table_pointer, IdtRegister *idtr)
-{
-    idtr->base_address = (uint32_t)table_pointer;
-    idtr->limit = IDT_SIZE * sizeof(IdtDescriptor);
 }
 
 // Initializes the IDT and loads it into memory.
@@ -89,6 +133,8 @@ void idt_init()
     create_idt_entry(&idt[46], (uint32_t)isr_irq14_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
     create_idt_entry(&idt[47], (uint32_t)isr_irq15_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
 
-    construct_idtr(idt, &IDTR);
+    IDTR.base_address = (uint32_t)idt;
+    IDTR.limit = IDT_SIZE * sizeof(IdtDescriptor);
+
     load_idt();
 }

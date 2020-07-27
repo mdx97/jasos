@@ -1,3 +1,4 @@
+#include "kernel.h"
 #include "shell.h"
 #include "utility.h"
 
@@ -9,6 +10,9 @@ const int UINT32_BITSTRING_LENGTH = 35;
 // Copys a section of memory from the source to the target.
 void memory_copy(void *source, void *target, int count)
 {
+    assert(source, NULL_PARAMETER_ERROR(memory_copy, source));
+    assert(target, NULL_PARAMETER_ERROR(memory_copy, target));
+
     for (int i = 0; i < count; i++) {
         *(uint8_t *)target = *(uint8_t *)source;
         source++;
@@ -19,6 +23,8 @@ void memory_copy(void *source, void *target, int count)
 // Fills a section of memory with the given value.
 void memory_fill(void *pointer, uint8_t value, int count)
 {
+    assert(pointer, NULL_PARAMETER_ERROR(memory_fill, pointer));
+
     for (int i = 0; i < count; i++) {
         *(uint8_t *)pointer = value;
         pointer++;
@@ -42,6 +48,8 @@ uint32_t power(uint32_t base, uint32_t exponent)
 // note: the string argument should be allocated with UINT32_STRING_LENGTH bytes.
 void uint_to_string(uint32_t number, char *string)
 {
+    assert(string, NULL_PARAMETER_ERROR(uint_to_string, string));
+
     if (number == 0) {
         string[0] = '0';
         string[1] = '\0';
@@ -73,6 +81,8 @@ void uint_to_string(uint32_t number, char *string)
 // note: the string argument should be allocated with UINT32_BITSTRING_LENGTH bytes.
 void uint_to_bitstring(uint32_t number, char *string)
 {
+    assert(string, NULL_PARAMETER_ERROR(uint_to_bitstring, string));
+
     string[0] = '0';
     string[1] = 'b';
 
@@ -117,6 +127,7 @@ void memory_dump(uint32_t address, uint8_t bytes_per, uint32_t count)
     }
 
     uint8_t *pointer = (uint8_t *)address;
+
     char temp[UINT8_STRING_LENGTH];
     char string[UINT8_STRING_LENGTH];
 

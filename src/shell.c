@@ -189,6 +189,8 @@ void shell_input(char c)
 // Prints a string to the shell.
 void shell_write(const char *string)
 {
+    assert(string, NULL_PARAMETER_ERROR(shell_write, string));
+    
     int i = 0;
     char c = string[0];
 
@@ -202,6 +204,7 @@ void shell_write(const char *string)
 // Prints a string to the shell, followed by a newline.
 void shell_writeline(const char *string)
 {
+    assert(string, NULL_PARAMETER_ERROR(shell_writeline, string));
     shell_write(string);
     shell_write("\n");
 }

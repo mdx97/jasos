@@ -1,45 +1,6 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include "asm.h"
-
-ASM_PROC(isr_except0_wrap);
-ASM_PROC(isr_except1_wrap);
-ASM_PROC(isr_except2_wrap);
-ASM_PROC(isr_except3_wrap);
-ASM_PROC(isr_except4_wrap);
-ASM_PROC(isr_except5_wrap);
-ASM_PROC(isr_except6_wrap);
-ASM_PROC(isr_except7_wrap);
-ASM_PROC(isr_except8_wrap);
-ASM_PROC(isr_except9_wrap);
-ASM_PROC(isr_except10_wrap);
-ASM_PROC(isr_except11_wrap);
-ASM_PROC(isr_except12_wrap);
-ASM_PROC(isr_except13_wrap);
-ASM_PROC(isr_except14_wrap);
-ASM_PROC(isr_except16_wrap);
-ASM_PROC(isr_except17_wrap);
-ASM_PROC(isr_except18_wrap);
-ASM_PROC(isr_except19_wrap);
-
-ASM_PROC(isr_irq0_wrap);
-ASM_PROC(isr_irq1_wrap);
-ASM_PROC(isr_irq2_wrap);
-ASM_PROC(isr_irq3_wrap);
-ASM_PROC(isr_irq4_wrap);
-ASM_PROC(isr_irq5_wrap);
-ASM_PROC(isr_irq6_wrap);
-ASM_PROC(isr_irq7_wrap);
-ASM_PROC(isr_irq8_wrap);
-ASM_PROC(isr_irq9_wrap);
-ASM_PROC(isr_irq10_wrap);
-ASM_PROC(isr_irq11_wrap);
-ASM_PROC(isr_irq12_wrap);
-ASM_PROC(isr_irq13_wrap);
-ASM_PROC(isr_irq14_wrap);
-ASM_PROC(isr_irq15_wrap);
-
 void isr_except0();
 void isr_except1();
 void isr_except2();

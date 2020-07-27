@@ -1,6 +1,7 @@
 #include "asm.h"
 #include "gdt.h"
 #include "idt.h"
+#include "kernel.h"
 #include "keyboard.h"
 #include "pic.h"
 #include "shell.h"
@@ -15,11 +16,13 @@ void shout()
 // Invokes a textual command against the kernel.
 void system(const char *command)
 {
+    assert(command, NULL_PARAMETER_ERROR(system, command));
+
     if (string_equal(command, "clear")) {
         shell_clear();
     } else if (string_equal(command, "help")) {
-        shell_writeline("The kernel supports the following built-in commands:\n- clear: Clears the screen\n- help: How did you get here?\n- sys: Prints basic system information");
-    } else if (string_equal(command, "sys")) {
+        shell_writeline("The kernel supports the following built-in commands:\n- clear: Clears the screen\n- help: How did you get here?\n- system: Prints basic system information");
+    } else if (string_equal(command, "system")) {
         shell_writeline("\n"
              " JJJJJJJJJ  AAAAAAAAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
              " JJJJJJJJJ  AAAAAAAAA  SSSSSSSSS  OOOOOOOOO  SSSSSSSSS\n"
@@ -35,6 +38,22 @@ void system(const char *command)
         );
     } else if (!string_equal(command, "")) {
         shell_writeline("Command not found! Type help to view available commands.");
+    }
+}
+
+// Crashes the system if the condition fails.
+void assert(bool condition, const char *message)
+{
+    if (message == 0) {
+        shell_clear();
+        shell_writeline("Error in assert: parameter 'message' is a null pointer.");
+        __asm__("hlt");
+    }
+
+    if (!condition) {
+        shell_clear();
+        shell_writeline(message);
+        __asm__("hlt");
     }
 }
 

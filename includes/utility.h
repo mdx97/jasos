@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define NULL_PARAMETER_ERROR(function, parameter) "Error in function " #function ": parameter '" #parameter "' is a null pointer."
+
 extern const int
     UINT8_STRING_LENGTH,
     UINT32_MAX_DIGITS,

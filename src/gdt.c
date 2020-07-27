@@ -1,3 +1,5 @@
+#include <stdint.h>
+#include <stdbool.h>
 #include "asm.h"
 #include "bits.h"
 #include "gdt.h"
@@ -7,6 +9,20 @@
 #define GDT_SIZE 3
 
 ASM_PROC(load_gdt);
+
+typedef struct __attribute__((__packed__)) t_gdt_register {
+    uint16_t limit;
+    uint32_t base_address;
+} GdtRegister;
+
+typedef struct __attribute__((__packed__)) t_gdt_descriptor {
+    uint16_t limit;
+    uint16_t base1;
+    uint8_t base2;
+    uint8_t access_byte;
+    uint8_t limit_and_flags;
+    uint8_t base3;
+} GdtDescriptor;
 
 GdtRegister GDTR;
 GdtDescriptor gdt[GDT_SIZE];
@@ -32,13 +48,6 @@ void create_gdt_entry(GdtDescriptor *descriptor, uint32_t base_address, uint32_t
     descriptor->limit_and_flags = lsb(limit >> 16, 4) | flags << 4;
 }
 
-// Populates the GDTR with the size and address of the GDT.
-void construct_gdtr(GdtDescriptor *table_pointer, GdtRegister *gdtr)
-{
-    gdtr->base_address = (uint32_t)table_pointer;
-    gdtr->limit = GDT_SIZE * sizeof(GdtDescriptor) - 1;
-}
-
 // Initializes the GDT and loads it into memory.
 void gdt_init()
 {
@@ -46,6 +55,7 @@ void gdt_init()
     create_gdt_entry(&gdt[0], 0, 0x00000, 0x80, 0x4);
     create_gdt_entry(&gdt[1], 0, 0xFFFFF, 0x9A, 0xC);
     create_gdt_entry(&gdt[2], 0, 0xFFFFF, 0x93, 0xC);
-    construct_gdtr(gdt, &GDTR);
+    GDTR.base_address = (uint32_t)gdt;
+    GDTR.limit = GDT_SIZE * sizeof(GdtDescriptor) - 1;
     load_gdt();
 }
