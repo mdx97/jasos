@@ -1,10 +1,10 @@
-#include <stdbool.h>
-#include <stdint.h>
+#include "idt.h"
 #include "asm.h"
 #include "bits.h"
-#include "idt.h"
 #include "shell.h"
 #include "utility.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 #define IDT_SIZE 256
 
@@ -78,13 +78,13 @@ IdtDescriptor idt[IDT_SIZE];
     - gate_type:            The IDT gate type.
     - dpl:                  Descriptor privilege level. 2-bit value.
 */
-void create_idt_entry(IdtDescriptor *descriptor, uint32_t offset, uint16_t selector, uint8_t gate_type, uint8_t dpl)
+void create_idt_entry(IdtDescriptor* descriptor, uint32_t offset, uint16_t selector, uint8_t gate_type, uint8_t dpl)
 {
     descriptor->offset_low = lsb(offset, 16);
     descriptor->offset_high = offset >> 16;
     descriptor->selector = selector;
     descriptor->unused = 0;
-    
+
     descriptor->data = gate_type;
     descriptor->data |= (gate_type == GATE_TYPE_TASK_32) << 4;
     descriptor->data |= dpl << 5;

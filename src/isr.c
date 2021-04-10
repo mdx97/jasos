@@ -2,7 +2,7 @@
 #include "keyboard.h"
 #include "shell.h"
 
-void exception_halt(const char *description)
+void exception_halt(const char* description)
 {
     shell_write(description);
     shell_writeline("! Halting OS...");
@@ -11,7 +11,7 @@ void exception_halt(const char *description)
 
 // Exception routines.
 
-// TODO: (Almost) all of these exception handlers contain placeholder code and are irrelevant until the kernel 
+// TODO: (Almost) all of these exception handlers contain placeholder code and are irrelevant until the kernel
 // is more mature. Every one of these exception handlers should be revisted eventually.
 
 void isr_except0()
@@ -113,7 +113,6 @@ void isr_except19()
 
 void isr_irq0()
 {
-
 }
 
 void isr_irq1()
@@ -123,70 +122,56 @@ void isr_irq1()
 
 void isr_irq2()
 {
-    
 }
 
 void isr_irq3()
 {
-
 }
 
 void isr_irq4()
 {
-    
 }
 
 void isr_irq5()
 {
-    
 }
 
 void isr_irq6()
 {
-
 }
 
 void isr_irq7()
 {
-    
 }
 
 void isr_irq8()
 {
-
 }
 
 void isr_irq9()
 {
-    
 }
 
 void isr_irq10()
 {
-    
 }
 
 void isr_irq11()
 {
-
 }
 
 void isr_irq12()
 {
-    
 }
 
 void isr_irq13()
 {
-    
 }
 
 void isr_irq14()
 {
-    
 }
 
 void isr_irq15()
 {
-    
 }

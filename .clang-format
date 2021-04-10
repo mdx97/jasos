@@ -1,0 +1,8 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+DerivePointerAlignment: false
+PointerAlignment: Left
+BreakBeforeBraces: Linux
+ColumnLimit: 0
+IndentCaseLabels: true
+AlignOperands: false

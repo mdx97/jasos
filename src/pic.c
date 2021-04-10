@@ -1,5 +1,5 @@
-#include "asm.h"
 #include "pic.h"
+#include "asm.h"
 
 const uint8_t PIC_MASTER_COMMAND_PORT = 0x20;
 const uint8_t PIC_MASTER_DATA_PORT = 0x21;

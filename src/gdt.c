@@ -1,10 +1,10 @@
-#include <stdint.h>
-#include <stdbool.h>
+#include "gdt.h"
 #include "asm.h"
 #include "bits.h"
-#include "gdt.h"
 #include "shell.h"
 #include "utility.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 #define GDT_SIZE 3
 
@@ -36,7 +36,7 @@ GdtDescriptor gdt[GDT_SIZE];
     - access_byte:              The byte that contains various descriptor flags (see Intel documentation for more info).
     - flags:                    The 4-bit value that contains the granularity and word size bits.
 */
-void create_gdt_entry(GdtDescriptor *descriptor, uint32_t base_address, uint32_t limit, uint8_t access_byte, uint8_t flags)
+void create_gdt_entry(GdtDescriptor* descriptor, uint32_t base_address, uint32_t limit, uint8_t access_byte, uint8_t flags)
 {
     descriptor->base1 = lsb(base_address, 16);
     descriptor->base2 = lsb(base_address >> 16, 8);
