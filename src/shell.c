@@ -174,7 +174,7 @@ void shell_input(char c)
         putchar('\n');
         system((const char*)buffer.data);
 
-        if (string_length(buffer) > 0) {
+        if (string_length(buffer.data) > 0) {
             memory_copy(buffer.data, &history.entries[history.ptr], buffer.ptr);
             history.entries[history.ptr][buffer.ptr] = '\0';
 
@@ -191,7 +191,7 @@ void shell_input(char c)
         shell_write(SHELL_INPUT_INDICATOR);
 
     } else if (c == SHELL_SCROLL_DOWN_KEY) {
-        if (history.scroll == 0 && !string_equal(buffer, buffer.hold)) {
+        if (history.scroll == 0 && !string_equal(buffer.data, buffer.hold)) {
             memory_copy(buffer.data, buffer.hold, buffer.ptr);
             buffer.hold_size = buffer.ptr;
             buffer.hold[buffer.ptr] = '\0';
