@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 
-void system(const char *command);
-void assert(bool condition, const char *message);
+void assert(bool condition, const char* message);
 
 #endif

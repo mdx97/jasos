@@ -16,6 +16,7 @@ void keydown()
     uint8_t scancode = in8(KEYBOARD_DATA_PORT) - 1;
     char c = scancode_keymap[scancode];
     if (c != '\0') {
+        // TEMP: This should not directly invoke the shell once we have multitasking working.
         shell_input(c);
     }
 }

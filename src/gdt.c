@@ -41,9 +41,7 @@ void create_gdt_entry(GdtDescriptor* descriptor, uint32_t base_address, uint32_t
     descriptor->base1 = lsb(base_address, 16);
     descriptor->base2 = lsb(base_address >> 16, 8);
     descriptor->base3 = base_address >> 24;
-
     descriptor->limit = lsb(limit, 16);
-
     descriptor->access_byte = access_byte;
     descriptor->limit_and_flags = lsb(limit >> 16, 4) | flags << 4;
 }

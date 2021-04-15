@@ -1,11 +1,13 @@
 #include "isr.h"
 #include "keyboard.h"
 #include "shell.h"
+#include "vga.h"
 
 void exception_halt(const char* description)
 {
-    shell_write(description);
-    shell_writeline("! Halting OS...");
+    vga_init();
+    vga_write(0, 0, (char*)description);
+    vga_write(0, 1, "! Halting OS...");
     __asm__("hlt");
 }
 

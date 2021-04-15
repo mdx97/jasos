@@ -85,8 +85,6 @@ _start:
 
 .end:
 
-extern shout
-
 global load_gdt:function
 load_gdt:
 	extern GDTR

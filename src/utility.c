@@ -12,7 +12,6 @@ void memory_copy(void* source, void* target, int count)
 {
     assert(source, NULL_PARAMETER_ERROR(memory_copy, source));
     assert(target, NULL_PARAMETER_ERROR(memory_copy, target));
-
     for (int i = 0; i < count; i++) {
         *(uint8_t*)target = *(uint8_t*)source;
         source++;
@@ -36,12 +35,10 @@ uint32_t power(uint32_t base, uint32_t exponent)
     if (exponent == 0) {
         return 1;
     }
-
     uint32_t result = base;
     for (uint32_t i = 1; i < exponent; i++) {
         result *= base;
     }
-
     return result;
 }
 
@@ -50,29 +47,24 @@ uint32_t power(uint32_t base, uint32_t exponent)
 void uint_to_string(uint32_t number, char* string)
 {
     assert(string, NULL_PARAMETER_ERROR(uint_to_string, string));
-
     if (number == 0) {
         string[0] = '0';
         string[1] = '\0';
         return;
     }
-
     char buffer[UINT32_STRING_LENGTH];
     int size = 0;
-
     while (number > 0) {
         int digit = number % 10;
         buffer[size] = (char)(digit + DIGIT_ASCII_OFFSET);
         number /= 10;
         size++;
     }
-
     int index = size - 1;
     while (index >= 0) {
         string[size - index - 1] = buffer[index];
         index--;
     }
-
     string[size] = '\0';
 }
 
@@ -82,10 +74,8 @@ void uint_to_string(uint32_t number, char* string)
 void uint_to_bitstring(uint32_t number, char* string)
 {
     assert(string, NULL_PARAMETER_ERROR(uint_to_bitstring, string));
-
     string[0] = '0';
     string[1] = 'b';
-
     for (int i = 0; i < 32; i++) {
         uint32_t value = power(2, 31 - i);
         if (number >= value) {
@@ -95,7 +85,6 @@ void uint_to_bitstring(uint32_t number, char* string)
             string[i + 2] = '0';
         }
     }
-
     string[UINT32_BITSTRING_LENGTH - 1] = '\0';
 }
 
@@ -119,26 +108,23 @@ void memory_dump_bitstring_format(char* source, char* dest, uint8_t bytes)
 void memory_dump(uint32_t address, uint8_t bytes_per, uint32_t count)
 {
     if (bytes_per == 0 || bytes_per > 4) {
-        shell_write("Memory dump called with invalid bytes_per argument: ");
+        shell_output("Memory dump called with invalid bytes_per argument: ");
         char bytes_per_string[UINT8_STRING_LENGTH];
         uint_to_string(bytes_per, (char*)&bytes_per_string);
-        shell_writeline(bytes_per_string);
+        shell_output(bytes_per_string);
         return;
     }
-
     uint8_t* pointer = (uint8_t*)address;
-
     char temp[UINT8_STRING_LENGTH];
     char string[UINT8_STRING_LENGTH];
-
     for (uint32_t i = 0; i < count; i++) {
-        shell_write("0b");
+        shell_output("0b");
         for (uint8_t j = 0; j < bytes_per; j++) {
             uint_to_bitstring(*pointer, (char*)&temp);
             memory_dump_bitstring_format((char*)&temp, (char*)&string, bytes_per);
-            shell_write(string);
+            shell_output(string);
             pointer++;
         }
-        shell_write("\n");
+        shell_output("\n");
     }
 }

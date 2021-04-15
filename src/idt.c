@@ -33,7 +33,6 @@ ASM_PROC(isr_except16_wrap);
 ASM_PROC(isr_except17_wrap);
 ASM_PROC(isr_except18_wrap);
 ASM_PROC(isr_except19_wrap);
-
 ASM_PROC(isr_irq0_wrap);
 ASM_PROC(isr_irq1_wrap);
 ASM_PROC(isr_irq2_wrap);
@@ -50,7 +49,6 @@ ASM_PROC(isr_irq12_wrap);
 ASM_PROC(isr_irq13_wrap);
 ASM_PROC(isr_irq14_wrap);
 ASM_PROC(isr_irq15_wrap);
-
 ASM_PROC(load_idt);
 
 typedef struct __attribute__((__packed__)) t_idt_register {
@@ -84,7 +82,6 @@ void create_idt_entry(IdtDescriptor* descriptor, uint32_t offset, uint16_t selec
     descriptor->offset_high = offset >> 16;
     descriptor->selector = selector;
     descriptor->unused = 0;
-
     descriptor->data = gate_type;
     descriptor->data |= (gate_type == GATE_TYPE_TASK_32) << 4;
     descriptor->data |= dpl << 5;
@@ -95,7 +92,6 @@ void create_idt_entry(IdtDescriptor* descriptor, uint32_t offset, uint16_t selec
 void idt_init()
 {
     memory_fill(idt, 0, sizeof(idt));
-
     create_idt_entry(&idt[0], (uint32_t)isr_except0_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[1], (uint32_t)isr_except1_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[2], (uint32_t)isr_except2_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
@@ -115,7 +111,6 @@ void idt_init()
     create_idt_entry(&idt[17], (uint32_t)isr_except17_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[18], (uint32_t)isr_except18_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
     create_idt_entry(&idt[19], (uint32_t)isr_except19_wrap, 0x8, GATE_TYPE_TRAP_32, 0);
-
     create_idt_entry(&idt[32], (uint32_t)isr_irq0_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
     create_idt_entry(&idt[33], (uint32_t)isr_irq1_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
     create_idt_entry(&idt[34], (uint32_t)isr_irq2_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
@@ -132,9 +127,7 @@ void idt_init()
     create_idt_entry(&idt[45], (uint32_t)isr_irq13_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
     create_idt_entry(&idt[46], (uint32_t)isr_irq14_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
     create_idt_entry(&idt[47], (uint32_t)isr_irq15_wrap, 0x8, GATE_TYPE_INTERRUPT_32, 0);
-
     IDTR.base_address = (uint32_t)idt;
     IDTR.limit = IDT_SIZE * sizeof(IdtDescriptor);
-
     load_idt();
 }
