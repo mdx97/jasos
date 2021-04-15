@@ -175,8 +175,12 @@ void shell_input(char c)
             return;
         }
         buffer.data[--buffer.ptr] = '\0';
-        // TODO: Handle wraparound.
-        cursor_pos.x--;
+        if (cursor_pos.x == 0) {
+            cursor_pos.x = WIDTH - 1;
+            cursor_pos.y -= 1;
+        } else {
+            cursor_pos.x--;
+        }
         syscall_put(cursor_pos.x, cursor_pos.y, ' ');
     } else if (c == SCROLL_DOWN_KEY) {
         // TODO: Implement.
