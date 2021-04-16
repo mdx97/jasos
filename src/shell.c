@@ -10,8 +10,8 @@
 #define INPUT_BUFFER_SIZE 256
 
 // TODO: Find a way to derive this from kernel?
-const int HEIGHT = 25;
-const int WIDTH = 80;
+#define HEIGHT 25
+#define WIDTH 80
 
 const char* INPUT_INDICATOR = "$ ";
 
@@ -26,23 +26,50 @@ typedef struct t_input_buffer {
     int hold_size;
 } InputBuffer;
 
-typedef struct t_history {
-    char entries[HISTORY_MAX][INPUT_BUFFER_SIZE];
-    int ptr;
-    int count;
-    int scroll;
-} History;
-
 typedef struct t_position {
     int x;
     int y;
 } Position;
 
 InputBuffer buffer;
-History history;
 Position cursor_pos;
-// char lines[LINES_MAX][WIDTH];
+char lines[LINES_MAX][WIDTH];
 int offset;
+
+void record_write(int x, int y, char* string)
+{
+    memory_copy(string, &(lines[y][x]), string_length(string));
+    syscall_write(x, y, string);
+}
+
+void record_put(int x, int y, char c)
+{
+    lines[y][x] = c;
+    syscall_put(x, y, c);
+}
+
+void hard_clear()
+{
+    // TODO: Need to wipe out ALL of lines, not just the ones currently being displayed.
+    for (int i = 0; i < WIDTH; i++) {
+        for (int j = 0; j < HEIGHT; j++) {
+            record_put(i, j, ' ');
+        }
+    }
+    cursor_pos.x = 0;
+    cursor_pos.y = 0;
+}
+
+void soft_clear()
+{
+    for (int i = 0; i < WIDTH; i++) {
+        for (int j = 0; j < HEIGHT; j++) {
+            syscall_put(i, j, ' ');
+        }
+    }
+    cursor_pos.x = 0;
+    cursor_pos.y = 0;
+}
 
 // Clears the input buffer.
 void clear_buffer()
@@ -58,7 +85,7 @@ void run(const char* command)
 {
     assert(command, NULL_PARAMETER_ERROR(system, command));
     if (string_equal(command, "clear")) {
-        shell_clear();
+        hard_clear();
     } else if (string_equal(command, "help")) {
         shell_output("The kernel supports the following built-in commands:\n- clear: Clears the screen\n- help: How did you get here?\n- system: Prints basic system information");
     } else if (string_equal(command, "system")) {
@@ -79,21 +106,14 @@ void run(const char* command)
     }
 }
 
-void scroll()
+void scroll_down()
 {
-    // if (cursor_pos.y > HEIGHT) {
-    //     int full_size = SHELL_LINE_LENGTH * SHELL_HEIGHT;
-    //     int shift_size = full_size - SHELL_LINE_LENGTH;
-    //     volatile char* pointer = (volatile char*)VIDEO_MEMORY_START;
-
-    //     for (int i = 0; i < full_size; i += 2) {
-    //         pointer[i] = pointer[i + (SHELL_LINE_LENGTH)];
-    //     }
-    //     for (int i = shift_size; i < shift_size; i += 2) {
-    //         pointer[i] = ' ';
-    //     }
-    //     cursor_pos.y--;
-    // }
+    // TODO: Need to make sure we don't scroll off the end of lines.
+    soft_clear();
+    offset++;
+    for (int i = 0; i < HEIGHT; i++) {
+        shell_output((const char*)lines[offset + i]);
+    }
 }
 
 // Initializes the shell.
@@ -103,73 +123,36 @@ void shell_init()
     buffer.hold[0] = '\0';
     buffer.ptr = 0;
     buffer.hold_size = 0;
-    history.ptr = 0;
-    history.scroll = 0;
-    syscall_write(0, 0, (char*)INPUT_INDICATOR);
-    cursor_pos.x = string_length(INPUT_INDICATOR);
-    cursor_pos.y = 0;
-    // for (int i = 0; i < LINES_MAX; i++) {
-    //     lines[i][0] = '\0';
-    // }
-    offset = 0;
-}
-
-// Clears the shell and sets the pointer back to the upper left corner of the terminal.
-void shell_clear()
-{
-    for (int i = 0; i < WIDTH; i++) {
-        for (int j = 0; j < HEIGHT; j++) {
-            syscall_put(i, j, ' ');
+    for (int i = 0; i < LINES_MAX; i++) {
+        // TODO-Q: Will this work with full lines?
+        for (int j = 0; j < WIDTH; j++) {
+            lines[i][j] = '\0';
         }
     }
-    cursor_pos.x = 0;
+    offset = 0;
+    record_write(0, 0, (char*)INPUT_INDICATOR);
+    cursor_pos.x = string_length(INPUT_INDICATOR);
     cursor_pos.y = 0;
 }
 
-// Sets the current input to the correct history value based off of the scroll value.
-void load_history_entry()
+void handle_scroll()
 {
-    // for (int i = 0; i < buffer.ptr * 2; i += 2) {
-    //     *video_pointer = ' ';
-    //     video_pointer -= 2;
-    // }
-
-    // *video_pointer = ' ';
-    // buffer.ptr = 0;
-    // buffer.data[0] = '\0';
-
-    // if (history.scroll != 0) {
-    //     // TODO: Prefer modulo, but negatives seem to be overflowing.
-    //     int index = history.scroll > history.ptr
-    //         ? history.ptr + (HISTORY_MAX - history.scroll)
-    //         : history.ptr - history.scroll;
-
-    //     char* pointer = (char*)&history.entries[index];
-    //     int size = string_length(pointer);
-    //     memory_copy(pointer, buffer.data, size);
-    //     buffer.data[size] = '\0';
-    //     buffer.ptr = size;
-    //     shell_write(pointer);
-    // } else {
-    //     memory_copy(buffer.hold, buffer.data, buffer.hold_size);
-    //     buffer.data[buffer.hold_size] = '\0';
-    //     buffer.ptr = buffer.hold_size;
-    //     shell_write(buffer.data);
-    // }
+    if (cursor_pos.y >= HEIGHT) {
+        cursor_pos.y--;
+        scroll_down();
+    }
 }
 
 // Sends a character to be processed by the shell.
 void shell_input(char c)
 {
-    // TODO: Handle scrolling.
     if (c == '\n') {
         cursor_pos.x = 0;
         cursor_pos.y++;
         run((const char*)buffer.data);
-        // TODO: Handle history.
         clear_buffer();
         cursor_pos.x = string_length(INPUT_INDICATOR);
-        syscall_write(0, cursor_pos.y, (char*)INPUT_INDICATOR);
+        record_write(0, cursor_pos.y, (char*)INPUT_INDICATOR);
     } else if (c == '\b') {
         if (buffer.ptr == 0) {
             return;
@@ -181,7 +164,7 @@ void shell_input(char c)
         } else {
             cursor_pos.x--;
         }
-        syscall_put(cursor_pos.x, cursor_pos.y, ' ');
+        record_put(cursor_pos.x, cursor_pos.y, ' ');
     } else if (c == SCROLL_DOWN_KEY) {
         // TODO: Implement.
     } else if (c == SCROLL_UP_KEY) {
@@ -192,32 +175,14 @@ void shell_input(char c)
         }
         buffer.data[buffer.ptr] = c;
         buffer.data[++buffer.ptr] = '\0';
-        syscall_put(cursor_pos.x, cursor_pos.y, c);
+        record_put(cursor_pos.x, cursor_pos.y, c);
         cursor_pos.x++;
         if (cursor_pos.x == WIDTH) {
             cursor_pos.x = 0;
             cursor_pos.y++;
+            handle_scroll();
         }
     }
-
-    // } else if (c == SHELL_SCROLL_DOWN_KEY) {
-    //     if (history.scroll == 0 && !string_equal(buffer.data, buffer.hold)) {
-    //         memory_copy(buffer.data, buffer.hold, buffer.ptr);
-    //         buffer.hold_size = buffer.ptr;
-    //         buffer.hold[buffer.ptr] = '\0';
-    //     }
-
-    //     if (history.scroll != history.count) {
-    //         history.scroll++;
-    //     }
-
-    //     load_history_entry();
-
-    // } else if (c == SHELL_SCROLL_UP_KEY) {
-    //     if (history.scroll != 0) {
-    //         history.scroll--;
-    //     }
-    //     load_history_entry();
 }
 
 // Prints a string to the shell.
@@ -232,8 +197,16 @@ Position shell_write(const char* string)
             x = 0;
             y++;
         } else {
-            syscall_put(x, y, string[i]);
+            record_put(x, y, string[i]);
             x++;
+            if (x == WIDTH) {
+                x = 0;
+                y++;
+            }
+        }
+        if (y >= HEIGHT) {
+            y--;
+            scroll_down();
         }
         i++;
     }
@@ -248,4 +221,5 @@ void shell_output(const char* string)
     Position end = shell_write(string);
     cursor_pos.x = 0;
     cursor_pos.y = end.y + 1;
+    handle_scroll();
 }
