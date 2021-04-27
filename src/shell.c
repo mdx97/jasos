@@ -16,6 +16,7 @@ Position cursor;
 char output[MAX_LINES][WIDTH];
 int offset = 0;
 
+// Scrolls the contents of the shell down by one line.
 void scroll()
 {
     offset++;
@@ -33,6 +34,7 @@ void scroll()
     }
 }
 
+// Moves the cursor to the next line and respects screen bounds.
 void nextline()
 {
     cursor.x = 0;
@@ -42,6 +44,7 @@ void nextline()
     }
 }
 
+// Writes a single character to the shell.
 void puts(char c)
 {
     syscall_put(cursor.x, cursor.y, c);
@@ -52,6 +55,7 @@ void puts(char c)
     }
 }
 
+// Writes a string to the shell.
 void write(const char* string)
 {
     char* ptr = (char*)string;
@@ -61,11 +65,26 @@ void write(const char* string)
     }
 }
 
-void prompt()
+// Handles user input for the shell.
+void shell_input(char c)
 {
-    write(PROMPT);
+    if (c == '\n') {
+        nextline();
+        write(PROMPT);
+    } else {
+        puts(c);
+    }
 }
 
+// Wrapper function for other parts of the kernel to send output to the shell.
+// TODO: This should be removed once the program is moved into userspace.
+void shell_output(const char* string)
+{
+    write(string);
+}
+
+// Initialization function that the kernel calls since this program is still a part of the kernel.
+// TODO: Once this is moved into userspace, this should become a regular main function.
 void shell_init()
 {
     for (int i = 0; i < HEIGHT; i++) {
@@ -75,20 +94,4 @@ void shell_init()
     }
     cursor.x = 0;
     cursor.y = 0;
-    prompt();
-}
-
-void shell_input(char c)
-{
-    if (c == '\n') {
-        nextline();
-        prompt();
-    } else {
-        puts(c);
-    }
-}
-
-void shell_output(const char* string)
-{
-    write(string);
 }
