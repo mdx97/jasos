@@ -94,4 +94,5 @@ void shell_init()
     }
     cursor.x = 0;
     cursor.y = 0;
+    write(PROMPT);
 }
